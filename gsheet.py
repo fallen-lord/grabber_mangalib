@@ -20,13 +20,7 @@ except gspread.exceptions.WorksheetNotFound:
 def add_table_manga(manga_data):
     # if manga_data['slug']
 
-    new_worksheet = mangalib.add_worksheet(
-
-        title=manga_data['slug'],
-        rows=manga_data['chapters_count'],
-        cols=6
-
-    )
+    new_worksheet = chapters
 
     new_worksheet.append_row(
         ["id",

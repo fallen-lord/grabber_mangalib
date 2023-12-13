@@ -9,7 +9,8 @@ GSHEET_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
 # MANGA_SLUG = "battle-through-the-heavens"
 # MANGA_SLUG = "doupo-cangqiong-dou-po-cang-qiong"
 # MANGA_SLUG = "cang-wan-bang-zhi-wan-shou-gui-yuan"
-MANGA_SLUG = "quanzhi-gaoshou"
+# MANGA_SLUG = "quanzhi-gaoshou"
+MANGA_SLUG = "martial-peak"
 
 
 MANGA_URL = MAIN_DOMAIN + MANGA_SLUG + '/'

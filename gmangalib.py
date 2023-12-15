@@ -1,16 +1,15 @@
 from selenium import webdriver
 # from webdriver_manager.chrome import ChromeDriverManager
-import time
+# import time
+
+from consts import MANGA_URL
+from gsheet import set_data, set_chapter
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
 driver = webdriver.Chrome(service=cService)
 # driver = 0
 # from selenium import webdriver
 
-# import time
-
-from consts import *
-from gsheet import set_data, set_chapter
 
 # options = webdriver.ChromeOptions()
 # options.add_argument('--headless')
@@ -37,42 +36,46 @@ def info_chapter(chapter):
     set_chapter(chapter)
 
 
-def manga_info():
+def manga_info(manga_url=MANGA_URL, manga_slug=MANGA_URL):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
-    driver.get(MANGA_URL)
+    driver.get(manga_url)
 
-    all_data = driver.execute_script("return window.__DATA__;")
-    # print(all_data)
+    manga_data = driver.execute_script("return window.__DATA__;")
+    print(manga_data)
 
-    set_data(all_data['manga'])
+    if manga_data["chapters"].get("list") == []:
+        return
 
-    return all_data['chapters']['list']
+    set_data(manga_data['manga'])
+
+    return manga_data['chapters']['list']
 
 
 def main(start=1, stop=None, count=10):
+
     start -= 1
+
     if stop == None:
         stop = start + count
     else:
         count = stop - start - 1
 
-    # print(22222222)
-    chapters = (manga_info())
+    chapters = manga_info()
+    if chapters is None:
+        return
     chapters.reverse()
-    # import json
-    # print(json.dumps(chapters, indent=4,))
 
     for i, chapter in enumerate(chapters[start:stop]):
+
         chapter['number_row'] = start + i + 2
         info_chapter(chapter)
-    # print(start + i + 2)
 
 
 if __name__ == "__main__":
     try:
 
-        start = 11
+        start = 1
 
         main(start, count=10)
 

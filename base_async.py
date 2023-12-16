@@ -1,7 +1,5 @@
 import asyncio
 
-# from requests_html import AsyncHTMLSession
-
 import aiohttp
 
 
@@ -24,21 +22,15 @@ async def get_img(link, number_page):
     return number_page, result
 
 
-# async def get_img(link, number_page):
-
-# 	asession = AsyncHTMLSession()
-# 	response = await asession.get(link)
-# 	return number_page, response
-
-
 async def result_links(links, async_func):
     tasks = [async_func(link, i) for i, link in enumerate(links)]
     results = await asyncio.gather(*tasks, return_exceptions=True)
+
     return results
 
 
 async def main_async(links, async_func, try_count=5):
-    # async_func tuple qaytarishi kerak
+    # async_func funksiyasi tuple tipini qaytarishi kerak
 
     all_results = []
 
@@ -66,3 +58,6 @@ async def main_async(links, async_func, try_count=5):
     # print(all_results)
     return all_results
 
+
+def main(links, async_func=get_img, try_count=5):
+    asyncio.run(main_async(links, async_func, try_count))

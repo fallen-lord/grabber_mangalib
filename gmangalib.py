@@ -1,27 +1,22 @@
-from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
-# import time
+import time
 
-from consts import MANGA_URL
-from gsheet import set_data, set_chapter
+from selenium import webdriver
+
+from consts import MAIN_DOMAIN
+from gsheet import set_data, set_chapter, get_chapters
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
 driver = webdriver.Chrome(service=cService)
-# driver = 0
-# from selenium import webdriver
 
 
 # options = webdriver.ChromeOptions()
 # options.add_argument('--headless')
 
-
 # driver = webdriver.Chrome(options=options)
-# driver = webdriver.Chrome()
 
 
 def info_chapter(chapter):
-    chapter_url = MANGA_URL + "v" + str(chapter["chapter_volume"]) + "/c" + chapter['chapter_number'] + "?page=1"
-    driver.get(chapter_url)
+    driver.get(chapter['chapter_url'])
 
     pages = driver.execute_script("return window.__pg;")
 
@@ -30,54 +25,69 @@ def info_chapter(chapter):
     for page in pages:
         pages_slug += page['u'] + ","
 
-    # print(pages_slug)
-    # print(chapter)
     chapter['pages'] = pages_slug
     set_chapter(chapter)
 
 
-def manga_info(manga_url=MANGA_URL, manga_slug=MANGA_URL):
+def manga_info(manga_url):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
     driver.get(manga_url)
 
     manga_data = driver.execute_script("return window.__DATA__;")
-    print(manga_data)
+    # print(manga_data)
+    if manga_data == None:
+        return []
 
-    if manga_data["chapters"].get("list") == []:
-        return
+    chapters_list = manga_data.get("chapters").get('list')
+    if chapters_list == []:
+        return []
 
     set_data(manga_data['manga'])
 
-    return manga_data['chapters']['list']
+    return chapters_list
 
 
-def main(start=1, stop=None, count=10):
+def set_manga(manga_slug, start=1, count=10, continue_download=True):
+    # start -= 1
 
-    start -= 1
+    manga_url = MAIN_DOMAIN + manga_slug + "/"
 
-    if stop == None:
-        stop = start + count
-    else:
-        count = stop - start - 1
+    chapters = manga_info(manga_url)
 
-    chapters = manga_info()
-    if chapters is None:
-        return
+    if continue_download and chapters != []:
+        start = len(get_chapters())
+
+    stop = start + count
     chapters.reverse()
 
     for i, chapter in enumerate(chapters[start:stop]):
-
         chapter['number_row'] = start + i + 2
+        chapter['chapter_url'] = (
+                manga_url
+                + "v"
+                + str(chapter["chapter_volume"])
+                + "/c"
+                + chapter['chapter_number']
+                + "?page=1")
         info_chapter(chapter)
+
+
+def main():
+    manga_slug = "wo-laopo-shi-mowang-darren"
+    set_manga(manga_slug, count=50)
 
 
 if __name__ == "__main__":
     try:
 
-        start = 1
+        start_time = time.time()
 
-        main(start, count=10)
+        main()
+
+        print(f"Yuklab olindi!!! ( {time.time() - start_time} s)")
+
+        # a = driver.request('POST', 'url here', data={"param1": "value1"})
 
     except Exception as e:
 
@@ -89,7 +99,7 @@ if __name__ == "__main__":
 
         raise e
 
-# finally:
+    finally:
 
-# 	driver.close()
-# 	driver.quit()
+        driver.close()
+        driver.quit()

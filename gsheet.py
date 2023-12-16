@@ -1,5 +1,3 @@
-
-
 mangalib = None
 
 
@@ -26,7 +24,6 @@ def add_or_get_chapter(worksheet_title):
 
 
 def open_sheet(**kwargs):
-
     import gspread
 
     from consts import GSHEET_KEY
@@ -45,10 +42,10 @@ def open_sheet(**kwargs):
 
 
 def set_data(manga_data):
-
     global mangalib
+
     if mangalib == None:
-        mangalib = open_sheet(manga_slug=manga_data['slug'])
+        open_sheet(manga_slug=manga_data['slug'])
     else:
         add_or_get_chapter(manga_data['slug'])
 
@@ -88,10 +85,8 @@ def set_chapter(chapter):
 
 
 def get_chapters():
-
     return chapters.get_all_values()[1:]
 
 
 def add_file_id(chapter, file_id):
-
     chapters.update_cell(chapter[5], 6, file_id)

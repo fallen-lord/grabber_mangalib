@@ -1,10 +1,8 @@
 # import time
 from img2pdf import convert
-# import requests
-# import PIL
 
-from gsheet import *
-from my_async_func import *
+from base_async import main, get_img
+from gsheet import get_chapters
 from teleg import *
 
 
@@ -22,7 +20,10 @@ def get_images(chapter):
         for img in chapter[-1]
     ]
     # print(img_links)
-    images = asyncio.run(main_async(img_links, get_img))
+
+    # Beginning Async programming
+
+    images = main(img_links, get_img)
 
     if images == []:
         raise Exception(f"Chapter {chapter[3]} da XATOLIK YUZAGA keldi")
@@ -83,7 +84,7 @@ def send_chapters(chapters, start=1, count=10, continue_sending=False):
 
 
 def lambda_handler():
-    chapters = get_chapters(MANGA_SLUG)
+    chapters = get_chapters()
 
     continue_sending = True
     start = 3

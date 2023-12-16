@@ -69,26 +69,7 @@
 #
 # 	asyncio.run(asend_file())
 
-global a
+a = None
 
-
-def add():
-
-	a = 15
-
-	def modify():
-		global a
-		a = 20
-
-	print("Перед изменением:", a)
-	print("Внесение изменений")
-	modify()
-	print("После изменения:", a)
-
-
-# a = 43
-add()
-global g
-print("Значение a:", a)
-print(type("ssss") is str)
-print(type(g))
+for i in a:
+    print(i)

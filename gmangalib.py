@@ -75,7 +75,7 @@ def set_manga(manga_slug, start=1, count=10, continue_download=True):
 
 def main():
     manga_slug = "wo-laopo-shi-mowang-darren"
-    set_manga(manga_slug, count=50)
+    set_manga(manga_slug, count=10)
 
 
 if __name__ == "__main__":
@@ -83,7 +83,16 @@ if __name__ == "__main__":
 
         start_time = time.time()
 
-        main()
+        # main()
+
+        driver.get("https://mangalib.me/manga-list?types[]=6")
+        from jscode import someCode
+        driver.execute_script(someCode + f"list_manga({5})")
+        time.sleep(1)
+        l = driver.execute_script("return document.rrd;")
+
+
+        print(l)
 
         print(f"Yuklab olindi!!! ( {time.time() - start_time} s)")
 

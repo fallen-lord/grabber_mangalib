@@ -42,26 +42,29 @@ def open_sheet(**kwargs):
 
 
 def set_data(manga_data):
-    global mangalib
+    global mangalib, manga, manga_ids
 
     if mangalib == None:
         open_sheet(manga_slug=manga_data['slug'])
+        manga = mangalib.worksheet("Manga")
+        manga_ids = manga.col_values(1)
     else:
         add_or_get_chapter(manga_data['slug'])
 
-    manga = mangalib.worksheet("Manga")
-    manga_ids = manga.col_values(4)
-
     if str(manga_data["id"]) in manga_ids:
         return
+    upper_or_under = lambda key: manga_data.get(key+'Name') if manga_data.get(key+'Name') else manga_data.get(key+'_name')
 
     new_manga_data = [
 
-        manga_data['name'],
-        manga_data['rusName'],
-        manga_data['engName'],
         manga_data['id'],
-        manga_data['slug']
+        manga_data['slug'],
+        manga_data['name'],
+        upper_or_under("rus"),
+        upper_or_under('eng'),
+        # manga_data['status'],
+        # "1",
+        "not_started",
 
     ]
 

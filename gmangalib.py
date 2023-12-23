@@ -2,6 +2,7 @@ import time
 
 from selenium import webdriver
 
+from jscode import someCode
 from consts import MAIN_DOMAIN
 from gsheet import set_data, set_chapter, get_chapters
 
@@ -14,6 +15,7 @@ driver = webdriver.Chrome(service=cService)
 
 # driver = webdriver.Chrome(options=options)
 
+mangaurl = lambda manga_slug: MAIN_DOMAIN + manga_slug + "/"
 
 def info_chapter(chapter):
     driver.get(chapter['chapter_url'])
@@ -51,7 +53,7 @@ def manga_info(manga_url):
 def set_manga(manga_slug, start=1, count=10, continue_download=True):
     # start -= 1
 
-    manga_url = MAIN_DOMAIN + manga_slug + "/"
+    manga_url = mangaurl(manga_slug)
 
     chapters = manga_info(manga_url)
 
@@ -73,9 +75,26 @@ def set_manga(manga_slug, start=1, count=10, continue_download=True):
         info_chapter(chapter)
 
 
+def list_page(page):
+    driver.execute_script(someCode + f"list_manga({page})")
+    time.sleep(1)
+    items = driver.execute_script("return document.rrd;")
+    print(items)
+    manga_list = items.get("items").get("data")
+    for manga in manga_list:
+        # print(manga)
+        set_data(manga)
+
+
+def set_manga_list():
+    driver.get("https://mangalib.me/manga-list?types[]=6")
+    for i in range(1, 10):
+        list_page(i)
+
 def main():
-    manga_slug = "wo-laopo-shi-mowang-darren"
-    set_manga(manga_slug, count=10)
+    # manga_slug = "wo-laopo-shi-mowang-darren"
+    # set_manga(manga_slug, count=10)
+    set_manga_list()
 
 
 if __name__ == "__main__":
@@ -83,16 +102,8 @@ if __name__ == "__main__":
 
         start_time = time.time()
 
-        # main()
+        main()
 
-        driver.get("https://mangalib.me/manga-list?types[]=6")
-        from jscode import someCode
-        driver.execute_script(someCode + f"list_manga({5})")
-        time.sleep(1)
-        l = driver.execute_script("return document.rrd;")
-
-
-        print(l)
 
         print(f"Yuklab olindi!!! ( {time.time() - start_time} s)")
 

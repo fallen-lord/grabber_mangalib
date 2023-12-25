@@ -1,4 +1,5 @@
 import time
+import json
 
 from selenium import webdriver
 
@@ -18,7 +19,6 @@ driver = webdriver.Chrome(service=cService)
 
 mangaurl = lambda manga_slug: MAIN_DOMAIN + manga_slug + "/"
 
-import json
 
 def extract_pages_from_html(html_content):
     # Find the start and end index of the script content
@@ -37,6 +37,7 @@ def extract_pages_from_html(html_content):
 
     return json_object
 
+
 def collect_img_slug(pages):
     pages_slug = ""
 
@@ -44,6 +45,7 @@ def collect_img_slug(pages):
         pages_slug += page['u'] + ","
 
     return pages_slug
+
 
 def split_list(input_list, chunk_size=50):
     """
@@ -59,6 +61,7 @@ def split_list(input_list, chunk_size=50):
     return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
 
 #
+
 
 def chapter_by_js(chapter_url):
     driver.execute_script(
@@ -81,6 +84,7 @@ def chapter_by_driver(chapter_url):
     driver.get(chapter_url)
     pages = driver.execute_script("return window.__pg;")
     return pages
+
 
 def info_chapter(chapter):
     start_time = time.time()
@@ -106,7 +110,7 @@ def manga_info(manga_url):
 
     manga_data = driver.execute_script("return window.__DATA__;")
     # print(manga_data)
-    if manga_data == None:
+    if manga_data is None:
         return []
 
     chapters_list = manga_data.get("chapters").get('list')

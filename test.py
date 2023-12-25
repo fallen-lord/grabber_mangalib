@@ -89,6 +89,72 @@ tmie for single chapter: 0.43378615379333496 s
 
  yuklab olsih uchun ketgan vaqt: 23.059311389923096 s
 
+tmie for single chapter: 0.3430137634277344 s 391
+tmie for single chapter: 0.447523832321167 s 392
+tmie for single chapter: 0.37055349349975586 s 393
+tmie for single chapter: 0.44660472869873047 s 394
+tmie for single chapter: 0.4120604991912842 s 395
+tmie for single chapter: 0.3801603317260742 s 396
+tmie for single chapter: 0.44230103492736816 s 397
+tmie for single chapter: 0.36467957496643066 s 398
+tmie for single chapter: 0.36484217643737793 s 399
+tmie for single chapter: 0.40335988998413086 s 400
+tmie for single chapter: 0.35192370414733887 s 401
+tmie for single chapter: 0.3652770519256592 s 402
+tmie for single chapter: 0.5049424171447754 s 403
+tmie for single chapter: 0.4112589359283447 s 404
+tmie for single chapter: 0.39137911796569824 s 405
+tmie for single chapter: 0.4079627990722656 s 406
+tmie for single chapter: 0.42221951484680176 s 407
+tmie for single chapter: 0.44745731353759766 s 408
+tmie for single chapter: 0.42283129692077637 s 409
+tmie for single chapter: 0.3614628314971924 s 410
+tmie for single chapter: 1.9833056926727295 s 411
+tmie for single chapter: 0.4363839626312256 s 412
+tmie for single chapter: 0.43018436431884766 s 413
+tmie for single chapter: 0.39045119285583496 s 414
+tmie for single chapter: 0.48698949813842773 s 415
+tmie for single chapter: 0.4381415843963623 s 416
+tmie for single chapter: 0.38347792625427246 s 417
+tmie for single chapter: 0.41127562522888184 s 418
+tmie for single chapter: 0.4326958656311035 s 419
+tmie for single chapter: 0.34105682373046875 s 420
+
+
+
+30 yuklab olsih uchun ketgan vaqt: 36.749202251434326 s
+
+tmie for single chapter: 0.36314845085144043 s 421
+tmie for single chapter: 0.4141831398010254 s 422
+tmie for single chapter: 0.2891092300415039 s 423
+tmie for single chapter: 0.39986348152160645 s 424
+tmie for single chapter: 0.35439515113830566 s 425
+tmie for single chapter: 0.4485280513763428 s 426
+tmie for single chapter: 0.4382493495941162 s 427
+tmie for single chapter: 0.4442873001098633 s 428
+tmie for single chapter: 0.5521748065948486 s 429
+tmie for single chapter: 0.42575693130493164 s 430
+tmie for single chapter: 0.3467848300933838 s 431
+tmie for single chapter: 0.477139949798584 s 432
+tmie for single chapter: 0.440140962600708 s 433
+tmie for single chapter: 0.4769585132598877 s 434
+tmie for single chapter: 0.41281962394714355 s 435
+tmie for single chapter: 0.3697855472564697 s 436
+tmie for single chapter: 0.34000396728515625 s 437
+tmie for single chapter: 0.45595741271972656 s 438
+tmie for single chapter: 0.412722110748291 s 439
+tmie for single chapter: 0.4563634395599365 s 440
+tmie for single chapter: 0.43544650077819824 s 441
+tmie for single chapter: 0.3904533386230469 s 442
+tmie for single chapter: 0.4573092460632324 s 443
+tmie for single chapter: 0.4577357769012451 s 444
+tmie for single chapter: 0.44958066940307617 s 445
+tmie for single chapter: 0.44795966148376465 s 446
+
+
+
+30 yuklab olsih uchun ketgan vaqt: 27.70906901359558 s
+
 
 """
 

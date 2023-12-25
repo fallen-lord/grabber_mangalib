@@ -1,4 +1,4 @@
-someCode = """
+fetch_list_manga = """
 
 function parseCookies() {
     var cookies = document.cookie.split(';');
@@ -57,3 +57,30 @@ function list_manga(page_number) {
 }
 
 """
+
+
+fetch_chapter = """
+
+function fetchData(url) {
+
+    document.next_page = "";
+    
+    var xhr = new XMLHttpRequest();
+    //var url = "https://mangalib.me/wo-laopo-shi-mowang-darren/v1/c437";
+
+
+    xhr.open("GET", url, false); // Note: The third parameter is set to false for synchronous
+        
+    xhr.send();
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        // Successful response
+        document.next_page = xhr.response;
+    } else {
+        // Error handling for non-200 status codes
+        var error = new Error(`HTTP error! Status: ${xhr.status}`);
+        throw error;
+}
+};
+
+"""
+

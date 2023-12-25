@@ -6,7 +6,7 @@ MANHWA_KEY = "1uAKhyTIVpXG3jRpp6PUtKvjRR36l04lb-nwc_Hzutws"
 
 MANAG_KEY = "10nQd-8ni7U6lbgEDuUJfgdBqeb-pxNxXs8-Z4mDhK6Q"
 
-GSHEET_KEY = MANAG_KEY
+GSHEET_KEY = MANHUA_KEY
 
 # MANGA_SLUG = "dawang-raoming"
 # MANGA_SLUG = "battle-through-the-heavens"

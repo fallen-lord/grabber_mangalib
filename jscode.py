@@ -20,7 +20,7 @@ function list_manga(page_number) {
 
     var xhr = new XMLHttpRequest();
     var url = "https://mangalib.me/api/list";
-    var jsonData = {"sort":"rate","dir":"desc","page":page_number,"types":["6"],"site_id":"1","type":"manga","caution_list":["Отсутствует","16+","18+"]};
+    var jsonData = {"sort":"rate","dir":"desc","page":page_number,"types":["1"],"site_id":"1","type":"manga","caution_list":["Отсутствует","16+","18+"]};
 
     xhr.open("POST", url, true);
 

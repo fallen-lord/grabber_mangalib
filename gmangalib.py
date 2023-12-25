@@ -87,7 +87,7 @@ def list_page(page):
 
 
 def set_manga_list():
-    driver.get("https://mangalib.me/manga-list?types[]=6")
+    driver.get("https://mangalib.me/manga-list?types[]=1")
     for i in range(1, 10):
         list_page(i)
 

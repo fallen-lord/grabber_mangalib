@@ -29,16 +29,14 @@ def open_sheet(**kwargs):
     from consts import GSHEET_KEY
 
     manga_slug = kwargs.get("manga_slug")
-    if type(manga_slug) is not str:
-        from consts import MANGA_SLUG
-        manga_slug = MANGA_SLUG
+    if manga_slug:
+        add_or_get_chapter(manga_slug)
 
     gc = gspread.service_account("sources/static_files/credentials.json")
 
     global mangalib
     mangalib = gc.open_by_key(GSHEET_KEY)
 
-    add_or_get_chapter(manga_slug)
 
 
 def set_data(manga_data):
@@ -48,8 +46,9 @@ def set_data(manga_data):
         open_sheet(manga_slug=manga_data['slug'])
         manga = mangalib.worksheet("Manga")
         manga_ids = manga.col_values(1)
-    else:
-        add_or_get_chapter(manga_data['slug'])
+        print("=== worked ===")
+    # else:
+    #     add_or_get_chapter(manga_data['slug'])
 
     if str(manga_data["id"]) in manga_ids:
         return
@@ -93,3 +92,14 @@ def get_chapters():
 
 def add_file_id(chapter, file_id):
     chapters.update_cell(chapter[5], 6, file_id)
+
+
+if __name__ == "__main__":
+    open_sheet()
+    worksheet = mangalib.worksheet("test")
+    # print(worksheet.get_all_values())
+    # worksheet.update(range_name='B1', values='Bingo!')
+    # worksheet.update_cell(1, 1, 'Bingo!')
+    # print([1, 2]*10)
+    # worksheet.update(range_name=([1, 3, 26, 3], [9, 6]*13, ))
+    # worksheet.update('A1:B2', [[1, 2], [3, 4]])

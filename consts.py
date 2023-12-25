@@ -1,6 +1,12 @@
 MAIN_DOMAIN = "https://mangalib.me/"
 
-GSHEET_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
+MANHUA_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
+
+MANHWA_KEY = "1uAKhyTIVpXG3jRpp6PUtKvjRR36l04lb-nwc_Hzutws"
+
+MANAG_KEY = "10nQd-8ni7U6lbgEDuUJfgdBqeb-pxNxXs8-Z4mDhK6Q"
+
+GSHEET_KEY = MANAG_KEY
 
 # MANGA_SLUG = "dawang-raoming"
 # MANGA_SLUG = "battle-through-the-heavens"

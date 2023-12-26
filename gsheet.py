@@ -85,6 +85,13 @@ def set_chapter(chapter):
     chapters.append_row(new_chapter)
 
 
+def set_chapters(chapters_list: list):
+    start_row = chapters_list[0][5]
+    end_row = chapters_list[-1][5]
+    range_cells = f"A{start_row}:G{end_row}"
+    chapters.update(range_cells, chapters_list)
+
+
 def get_chapters():
     return chapters.get_all_values()[1:]
 

@@ -5,7 +5,7 @@ from selenium import webdriver
 
 from jscode import fetch_list_manga, fetch_chapter
 from consts import MAIN_DOMAIN
-from gsheet import set_data, set_chapter, get_chapters
+from gsheet import set_data, set_chapter, get_chapters, set_chapters
 
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
@@ -86,7 +86,7 @@ def chapter_by_driver(chapter_url):
     return pages
 
 
-def info_chapter(chapter):
+def info_chapter(chapter, return_data=False):
     start_time = time.time()
 
     # pages = chapter_by_driver(chapter['url'])
@@ -99,7 +99,8 @@ def info_chapter(chapter):
 
 
     chapter['pages'] = pages_slug
-
+    if return_data:
+        return chapter
     set_chapter(chapter)
 
 
@@ -124,23 +125,37 @@ def manga_info(manga_url):
 
 def chapter_group(chapters, start):
 
+    chapter_list = []
     for i, chapter in enumerate(chapters):
         chapter['number_row'] = start + i + 2
         chapter['url'] = (
-                manga_url
-                + "v"
-                + str(chapter["chapter_volume"])
-                + "/c"
-                + chapter['chapter_number']
-                + "?page=1")
-        info_chapter(chapter)
+                manga_url + "v"
+                + str(chapter["chapter_volume"]) + "/c"
+                + chapter['chapter_number'] + "?page=1")
+        chapter = info_chapter(chapter, True)
+        chapter_list.append([
+            chapter["chapter_id"],
+            chapter["chapter_slug"],
+            chapter['chapter_name'],
+            chapter['chapter_number'],
+            chapter['chapter_volume'],
+            chapter['number_row'],
+            chapter['pages'],
+        ])
+        # print(chapter_list[i])
+    set_chapters(chapter_list)
+    print(chapter_list[0][5], chapter_list[-1][5],)
+
 
 
 def split_chapters(chapters, start, stop):
-    chapters_list = split_list(chapters)
+    chunk_size = 30
+    chapters_list = split_list(chapters[start:stop], chunk_size)
     for chapters in chapters_list:
-        print(chapters, len(chapters))
+        # send_chapters = []
+        # print(chapters, len(chapters))
         chapter_group(chapters, start)
+        start += chunk_size
         # for i, chapter in enumerate(chapters[start:stop]):
         #     chapter['number_row'] = start + i + 2
         #     chapter['url'] = (
@@ -165,18 +180,18 @@ def set_manga(manga_slug, start=1, count=10, continue_download=True):
 
     stop = start + count
     chapters.reverse()
-    # split_chapters(chapters, start, stop)
+    split_chapters(chapters, start, stop)
 
-    for i, chapter in enumerate(chapters[start:stop]):
-        chapter['number_row'] = start + i + 2
-        chapter['url'] = (
-                manga_url
-                + "v"
-                + str(chapter["chapter_volume"])
-                + "/c"
-                + chapter['chapter_number']
-                + "?page=1")
-        info_chapter(chapter)
+    # for i, chapter in enumerate(chapters[start:stop]):
+    #     chapter['number_row'] = start + i + 2
+    #     chapter['url'] = (
+    #             manga_url
+    #             + "v"
+    #             + str(chapter["chapter_volume"])
+    #             + "/c"
+    #             + chapter['chapter_number']
+    #             + "?page=1")
+    #     info_chapter(chapter)
 
 
 def list_page(page):
@@ -197,8 +212,8 @@ def set_manga_list():
 
 
 def main():
-    manga_slug = "wo-laopo-shi-mowang-darren"
-    set_manga(manga_slug, count=30)
+    manga_slug = "tian-mei-de-yao-hen-lic"
+    set_manga(manga_slug, count=100)
     # set_manga_list()
 
 

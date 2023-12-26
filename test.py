@@ -155,8 +155,82 @@ tmie for single chapter: 0.44795966148376465 s 446
 
 30 yuklab olsih uchun ketgan vaqt: 27.70906901359558 s
 
+tmie for single chapter: 0.39470458030700684 s 2
+tmie for single chapter: 0.36496734619140625 s 3
+tmie for single chapter: 0.8172605037689209 s 4
+tmie for single chapter: 0.4333822727203369 s 5
+tmie for single chapter: 0.4058237075805664 s 6
+tmie for single chapter: 0.4186723232269287 s 7
+tmie for single chapter: 0.39034008979797363 s 8
+tmie for single chapter: 0.43503475189208984 s 9
+tmie for single chapter: 0.4701192378997803 s 10
+tmie for single chapter: 0.3893251419067383 s 11
+tmie for single chapter: 0.3834054470062256 s 12
+tmie for single chapter: 0.43703746795654297 s 13
+tmie for single chapter: 0.5149893760681152 s 14
+tmie for single chapter: 0.3118104934692383 s 15
+tmie for single chapter: 0.3688385486602783 s 16
+tmie for single chapter: 0.4134807586669922 s 17
+tmie for single chapter: 0.40390515327453613 s 18
+tmie for single chapter: 0.42615461349487305 s 19
+tmie for single chapter: 0.3993537425994873 s 20
+tmie for single chapter: 0.3339669704437256 s 21
+tmie for single chapter: 0.3968973159790039 s 22
+tmie for single chapter: 0.39488959312438965 s 23
+tmie for single chapter: 0.37909817695617676 s 24
+tmie for single chapter: 0.4806661605834961 s 25
+tmie for single chapter: 0.4203791618347168 s 26
+tmie for single chapter: 0.507565975189209 s 27
+tmie for single chapter: 0.43428635597229004 s 28
+tmie for single chapter: 0.42130351066589355 s 29
+tmie for single chapter: 0.40080904960632324 s 30
+tmie for single chapter: 0.39835286140441895 s 31
+
+
+
+30 yuklab olsih uchun ketgan vaqt: 33.49051833152771 s
+
+tmie for single chapter: 0.3877730369567871 s 32
+tmie for single chapter: 0.3475356101989746 s 33
+tmie for single chapter: 0.3760871887207031 s 34
+tmie for single chapter: 0.4177274703979492 s 35
+tmie for single chapter: 0.4423658847808838 s 36
+tmie for single chapter: 0.39986705780029297 s 37
+tmie for single chapter: 0.4464123249053955 s 38
+tmie for single chapter: 0.38143014907836914 s 39
+tmie for single chapter: 0.4037172794342041 s 40
+tmie for single chapter: 0.3841989040374756 s 41
+32 41
+
+
+
+10 yuklab olsih uchun ketgan vaqt: 13.040335178375244 s
+
+
+30 yuklab olsih uchun ketgan vaqt: 21.508570909500122 s
 
 """
+
+
+
+
+import requests
+import asyncio
+
+async def func1(url):
+    response = await requests.get(url)
+    return response.text
+
+async def func2(url):
+    response = await requests.get(url)
+    return response.text
+
+responses = asyncio.gather(
+    func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c34?page=1"),
+    func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c35?page=1"),
+)
+
+print(responses)
 
 # async def funck3():
 # 	from requests_html import AsyncHTMLSession

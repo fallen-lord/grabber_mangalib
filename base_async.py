@@ -60,4 +60,4 @@ async def main_async(links, async_func, try_count=5):
 
 
 def main(links, async_func=get_img, try_count=5):
-    asyncio.run(main_async(links, async_func, try_count))
+    return asyncio.run(main_async(links, async_func, try_count))

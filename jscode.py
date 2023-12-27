@@ -84,3 +84,81 @@ function fetchData(url) {
 
 """
 
+
+asyncJS = """
+
+async function ignoreErrors(allResults) {
+  return allResults.filter(result => Array.isArray(result));
+}
+
+async function getPageHTML(link) {
+  try {
+    pageNumber = link[0]
+    url = link[1]
+    const response = await fetch(url);
+
+    const result = await response.text();
+     // console.log(pageNumber);
+      if (!response.ok) {
+      return null;
+    }
+
+    return [link[0], result];
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+}
+
+async function resultLinks(links, asyncFunc) {
+  const tasks = links.map((link) => asyncFunc(link));
+  const results = await Promise.allSettled(tasks);
+
+  return results.map(result => result.status === 'fulfilled' ? result.value : null);
+}
+
+async function mainAsync(links, asyncFunc, tryCount = 5) {
+  let allResults = [];
+  links = links.map((link, i) => [i, link]);
+
+  for (let i = 0; i < tryCount; i++) {
+    const results = await resultLinks(links, asyncFunc);
+    const errorLinks = [];
+    allResults = allResults.concat(results.filter(result => result !== null));
+    //allResults = allResults.concat(results);
+
+    for (let j = 0; j < results.length; j++) {
+      if (results[j] === null) {
+        errorLinks.push(links[j]);
+      }
+    }
+
+      //console.log(allResults);
+
+    if (errorLinks.length === 0) {
+      break;
+    }
+
+    links = errorLinks;
+      //console.log(allResults);
+
+    if (tryCount - i === 1) {
+      console.log('Asynchronous error occurred');
+     // console.log(results);
+    }
+  }
+    //console.log(allResults);
+  allResults = ignoreErrors(allResults);
+
+  //allResults = allResults.sort();
+  return allResults;
+}
+
+async function main(links, asyncFunc = getPageHTML, tryCount = 5) {
+  return await mainAsync(links, asyncFunc, tryCount);
+}
+
+
+
+"""
+

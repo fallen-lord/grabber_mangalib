@@ -3,7 +3,7 @@ import json
 
 from selenium import webdriver
 
-from jscode import fetch_list_manga, fetch_chapter
+from jscode import *
 from consts import MAIN_DOMAIN
 from gsheet import set_data, set_chapter, get_chapters, set_chapters
 
@@ -59,8 +59,6 @@ def split_list(input_list, chunk_size=50):
     A list of sublists.
     """
     return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
-
-#
 
 
 def chapter_by_js(chapter_url):
@@ -123,6 +121,41 @@ def manga_info(manga_url):
     return chapters_list
 
 
+def async_js(links: list):
+
+    jscode = asyncJS + "main(" + json.dumps(links) + """)
+  .then(results => document.async_pages = results.sort((a, b) => a[0] - b[0]))
+  .catch(error => console.error('Error:', error));
+    """
+    # print(jscode)
+    driver.execute_script(jscode, links)
+    chapter_pages_html = None
+    while not chapter_pages_html:
+
+        chapter_pages_html = driver.execute_script("return document.async_pages;")
+        # print(chapter_pages_html)
+        time.sleep(1)
+
+    # chapter_pages = list(map(extract_pages_from_html, chapter_pages_html))
+    # print(chapter_pages)
+
+
+def async_chapter_group(chapters, start):
+
+    links = []
+    for i, chapter in enumerate(chapters):
+        chapter['number_row'] = start + i + 2
+        links.append(
+            manga_url + "v"
+            + str(chapter["chapter_volume"]) + "/c"
+            + chapter['chapter_number'] + "?page=1"
+        )
+    # print(links)
+
+    async_js(links)
+    # time.sleep(100)
+
+
 def chapter_group(chapters, start):
 
     chapter_list = []
@@ -148,24 +181,18 @@ def chapter_group(chapters, start):
 
 
 
+
 def split_chapters(chapters, start, stop):
-    chunk_size = 30
+    chunk_size = 50
     chapters_list = split_list(chapters[start:stop], chunk_size)
+
     for chapters in chapters_list:
-        # send_chapters = []
-        # print(chapters, len(chapters))
-        chapter_group(chapters, start)
+        start_time = time.time()
+        # chapter_group(chapters, start)
+        async_chapter_group(chapters, start)
         start += chunk_size
-        # for i, chapter in enumerate(chapters[start:stop]):
-        #     chapter['number_row'] = start + i + 2
-        #     chapter['url'] = (
-        #             manga_url
-        #             + "v"
-        #             + str(chapter["chapter_volume"])
-        #             + "/c"
-        #             + chapter['chapter_number']
-        #             + "?page=1")
-        #     info_chapter(chapter)
+        finish_time = time.time() - start_time
+        print(f"\n\n {chunk_size} ta uchun ketgan vaqt: {finish_time} s")
 
 
 def set_manga(manga_slug, start=1, count=10, continue_download=True):
@@ -212,7 +239,7 @@ def set_manga_list():
 
 
 def main():
-    manga_slug = "tian-mei-de-yao-hen-lic"
+    manga_slug = "beauty-and-the-beasts"
     set_manga(manga_slug, count=100)
     # set_manga_list()
 
@@ -228,6 +255,7 @@ if __name__ == "__main__":
         print(f"\n\n\n yuklab olsih uchun ketgan vaqt: {finish_time} s")
 
     except Exception as e:
+        # time.sleep(10)
 
         driver.close()
         driver.quit()

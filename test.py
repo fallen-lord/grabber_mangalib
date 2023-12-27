@@ -209,28 +209,51 @@ tmie for single chapter: 0.3841989040374756 s 41
 
 30 yuklab olsih uchun ketgan vaqt: 21.508570909500122 s
 
+100 yuklab olsih uchun ketgan vaqt: 39.32014608383179 s
+
+sync        50 ta uchun ketgan vaqt: 20.832292556762695 s
+        
+sync        50 ta uchun ketgan vaqt: 21.512802839279175 s
+
+100 yuklab olsih uchun ketgan vaqt: 50.73588156700134 s
+
+50 ta uchun ketgan vaqt: 18.20540761947632 s
+
+
+ 50 ta uchun ketgan vaqt: 2.0094058513641357 s
+
+
+
+ yuklab olsih uchun ketgan vaqt: 29.334247827529907 s
+
+
 """
 
 
 
 
-import requests
-import asyncio
+# import requests
+# import asyncio
+#
+# async def func1(url):
+#     response = await requests.get(url)
+#     return response.text
+#
+# async def func2(url):
+#     response = await requests.get(url)
+#     return response.text
+#
+# responses = asyncio.gather(
+#     func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c34?page=1"),
+#     func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c35?page=1"),
+# )
+#
+# print(responses)
 
-async def func1(url):
-    response = await requests.get(url)
-    return response.text
+for i in range(1, 60):
+    print(f'"https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c{i}?page=1",')
 
-async def func2(url):
-    response = await requests.get(url)
-    return response.text
 
-responses = asyncio.gather(
-    func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c34?page=1"),
-    func1("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c35?page=1"),
-)
-
-print(responses)
 
 # async def funck3():
 # 	from requests_html import AsyncHTMLSession
@@ -300,7 +323,7 @@ print(responses)
 #
 # 	asyncio.run(asend_file())
 
-a = None
-
-for i in a:
-    print(i)
+# a = None
+#
+# for i in a:
+#     print(i)

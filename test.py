@@ -227,6 +227,57 @@ sync        50 ta uchun ketgan vaqt: 21.512802839279175 s
  yuklab olsih uchun ketgan vaqt: 29.334247827529907 s
 
 
+
+ 50 ta uchun ketgan vaqt: 25.836416721343994 s
+
+
+ 50 ta uchun ketgan vaqt: 32.330801486968994 s
+
+
+ 50 ta uchun ketgan vaqt: 33.23097229003906 s
+
+
+ 50 ta uchun ketgan vaqt: 32.49933099746704 s
+
+
+
+ yuklab olsih uchun ketgan vaqt: 132.2770209312439 s
+
+
+ 50 ta uchun ketgan vaqt: 21.622763633728027 s
+
+
+
+ yuklab olsih uchun ketgan vaqt: 54.61242961883545 s
+
+===========================================================
+
+ 50 ta uchun ketgan vaqt: 6.824789762496948 s
+
+
+ 50 ta uchun ketgan vaqt: 3.298090934753418 s
+
+
+
+ yuklab olsih uchun ketgan vaqt: 20.574363231658936 s
+
+
+ 50 ta uchun ketgan vaqt: 6.232363224029541 s
+
+
+ 50 ta uchun ketgan vaqt: 3.0743963718414307 s
+
+
+ 50 ta uchun ketgan vaqt: 3.2755045890808105 s
+
+
+ 50 ta uchun ketgan vaqt: 3.04475998878479 s
+
+
+
+ 200    yuklab olsih uchun ketgan vaqt: 25.04491662979126 s
+
+400  yuklab olsih uchun ketgan vaqt: 37.388636112213135 s
 """
 
 

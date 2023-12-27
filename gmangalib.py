@@ -130,18 +130,20 @@ def async_js(links: list):
     # print(jscode)
     driver.execute_script(jscode, links)
     chapter_pages_html = None
-    while not chapter_pages_html:
+    for i in range(100):
 
         chapter_pages_html = driver.execute_script("return document.async_pages;")
-        # print(chapter_pages_html)
-        time.sleep(1)
+        if chapter_pages_html is not None:
+            break
+        time.sleep(0.1)
+        print(chapter_pages_html)
 
-    # chapter_pages = list(map(extract_pages_from_html, chapter_pages_html))
-    # print(chapter_pages)
+    return [item[1] for item in chapter_pages_html]
 
 
 def async_chapter_group(chapters, start):
 
+    chapters_data = []
     links = []
     for i, chapter in enumerate(chapters):
         chapter['number_row'] = start + i + 2
@@ -152,8 +154,23 @@ def async_chapter_group(chapters, start):
         )
     # print(links)
 
-    async_js(links)
-    # time.sleep(100)
+    chapter_pages = async_js(links)
+    chapter_pages = list(map(extract_pages_from_html, chapter_pages))
+    # print(chapter_pages)
+
+    # for i in range(len(chapters)):
+    chapters_data = [[
+        chapters[i]["chapter_id"],
+        chapters[i]["chapter_slug"],
+        chapters[i]['chapter_name'],
+        chapters[i]['chapter_number'],
+        chapters[i]['chapter_volume'],
+        chapters[i]['number_row'],
+        collect_img_slug(chapter_pages[i]),
+        ]
+        for i in range(len(chapters))
+        ]
+    set_chapters(chapters_data)
 
 
 def chapter_group(chapters, start):
@@ -239,8 +256,8 @@ def set_manga_list():
 
 
 def main():
-    manga_slug = "beauty-and-the-beasts"
-    set_manga(manga_slug, count=100)
+    manga_slug = "little-angel-and-good-devil"
+    set_manga(manga_slug, count=400)
     # set_manga_list()
 
 

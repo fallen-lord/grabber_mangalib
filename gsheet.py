@@ -107,6 +107,9 @@ def add_file_id(chapter, file_id):
 
 open_sheet()
 
+def get_manga_list():
+    return manga.get_all_values()[1:]
+
 # if __name__ == "__main__":
 #     open_sheet()
 #     worksheet = mangalib.worksheet("test")

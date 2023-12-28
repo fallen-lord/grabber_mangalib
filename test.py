@@ -301,10 +301,28 @@ sync        50 ta uchun ketgan vaqt: 21.512802839279175 s
 #
 # print(responses)
 
-for i in range(1, 60):
-    print(f'"https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c{i}?page=1",')
+# for i in range(1, 60):
+#     print(f'"https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c{i}?page=1",')
 
+from selenium import webdriver
+import requests
 
+cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
+driver = webdriver.Chrome(service=cService)
+
+driver.get("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c1?page=10")
+
+s = requests.Session()
+# Set correct user agent
+selenium_user_agent = driver.execute_script("return navigator.userAgent;")
+s.headers.update({"user-agent": selenium_user_agent})
+
+for cookie in driver.get_cookies():
+    s.cookies.set(cookie['name'], cookie['value'], domain=cookie['domain'])
+
+response = s.get("https://mangalib.me/tian-mei-de-yao-hen-lic/v1/c1?page=1")
+
+print(response.text, response)
 
 # async def funck3():
 # 	from requests_html import AsyncHTMLSession

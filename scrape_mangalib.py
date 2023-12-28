@@ -5,7 +5,7 @@ from selenium import webdriver
 
 from jscode import *
 from consts import MAIN_DOMAIN
-from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status
+from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status, get_manga_list
 
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
@@ -129,19 +129,20 @@ def update_manga_status(manga: list):
         update_status(manga[0], (8, status_manga))
 
 
-def manga_info(manga_url):
+def manga_info(manga_slug):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
     driver.get(manga_url)
 
     manga_data = driver.execute_script("return window.__DATA__;")
-    # print(manga_data)
-    if manga_data is None:
-        return []
 
+    if manga_data is None:
+        update_status(manga_slug, (6, "abandoned"))
+        return [], []
     chapters_list = manga_data.get("chapters").get('list')
     if chapters_list == []:
-        return []
+        update_status(manga_slug, (6, "abandoned"))
+        return [], []
 
     manga = set_data(manga_data['manga'])
     update_manga_status(manga)
@@ -164,7 +165,7 @@ def async_js(links: list):
         chapter_pages_html = driver.execute_script("return document.async_pages;")
         if chapter_pages_html is not None:
             break
-        time.sleep(0.5)
+        time.sleep(0.4)
         # print(chapter_pages_html)
 
     return [item[1] for item in chapter_pages_html]
@@ -238,13 +239,14 @@ def split_chapters(chapters, start, stop):
         print(f"\n\n {chunk_size} ta uchun ketgan vaqt: {finish_time} s")
 
 
-
 def set_manga(manga_slug, count=None):
 
     global manga_url
     manga_url = mangaurl(manga_slug)
 
-    chapters, manga = manga_info(manga_url)
+    chapters, manga = manga_info(manga_slug)
+    if not chapters:
+        return
 
     start = len(get_chapters())
 
@@ -276,11 +278,23 @@ def set_manga_list():
         list_page(i)
 
 
+def download_list(manga_list=None, count=10):
 
+    if not manga_list:
+        manga_list = get_manga_list()
+        manga_list = manga_list[20:]
+        manga_list = list(filter(lambda manga: (manga[5] != "completed" and manga[5] != "abandoned"), manga_list))
+
+    for i, manga in enumerate(manga_list):
+        set_manga(manga[1])
+        # break
+        if i == count:
+            break
 
 def main():
-    manga_slug = "versatile-mage"
-    set_manga(manga_slug,)
+    download_list()
+    # manga_slug = "wu-dao-du-zun"
+    # set_manga(manga_slug,)
     # set_manga_list()
 
 

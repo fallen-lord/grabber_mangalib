@@ -5,7 +5,7 @@ from selenium import webdriver
 
 from jscode import *
 from consts import MAIN_DOMAIN
-from gsheet import set_data, set_chapter, get_chapters, set_chapters
+from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status
 
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
@@ -102,6 +102,33 @@ def info_chapter(chapter, return_data=False):
     set_chapter(chapter)
 
 
+def get_value(css_selector):
+    from selenium.webdriver.common.by import By
+
+    # Find the first div element with the specified class
+    div_element = driver.find_element(By.CSS_SELECTOR, css_selector)
+
+    # Get the text content of the div element
+    value_text = div_element.text
+
+    if value_text == "Продолжается":
+        value_text = "continues"
+    elif value_text == "Завершен":
+        value_text = "completed"
+    elif value_text == "Заморожен":
+        value_text = "frozen"
+    else:
+        value_text = "abandoned"
+    return value_text
+
+def update_manga_status(manga: list):
+    if manga[5] == "not_started":
+        update_status(manga[0], (6, "started"))
+    if len(manga) == 7:
+        status_manga = get_value('div.media-info-list__value.text-capitalize')
+        update_status(manga[0], (8, status_manga))
+
+
 def manga_info(manga_url):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
@@ -116,9 +143,11 @@ def manga_info(manga_url):
     if chapters_list == []:
         return []
 
-    set_data(manga_data['manga'])
+    manga = set_data(manga_data['manga'])
+    update_manga_status(manga)
 
-    return chapters_list
+
+    return chapters_list, manga
 
 
 def async_js(links: list):
@@ -136,14 +165,13 @@ def async_js(links: list):
         if chapter_pages_html is not None:
             break
         time.sleep(0.1)
-        print(chapter_pages_html)
+        # print(chapter_pages_html)
 
     return [item[1] for item in chapter_pages_html]
 
 
 def async_chapter_group(chapters, start):
 
-    chapters_data = []
     links = []
     for i, chapter in enumerate(chapters):
         chapter['number_row'] = start + i + 2
@@ -197,8 +225,6 @@ def chapter_group(chapters, start):
     print(chapter_list[0][5], chapter_list[-1][5],)
 
 
-
-
 def split_chapters(chapters, start, stop):
     chunk_size = 50
     chapters_list = split_list(chapters[start:stop], chunk_size)
@@ -212,30 +238,26 @@ def split_chapters(chapters, start, stop):
         print(f"\n\n {chunk_size} ta uchun ketgan vaqt: {finish_time} s")
 
 
-def set_manga(manga_slug, start=1, count=10, continue_download=True):
-    # start -= 1
+
+def set_manga(manga_slug, start=1, count=10, continue_download=True, all_download=False):
+
     global manga_url
     manga_url = mangaurl(manga_slug)
 
-    chapters = manga_info(manga_url)
+    chapters, manga = manga_info(manga_url)
 
     if continue_download and chapters != []:
         start = len(get_chapters())
 
-    stop = start + count
+    if all_download:
+        stop = len(chapters) + 10 # 10 ni shunchaki qo'shib qo'ydim
+    else:
+        stop = start + count
+
     chapters.reverse()
     split_chapters(chapters, start, stop)
-
-    # for i, chapter in enumerate(chapters[start:stop]):
-    #     chapter['number_row'] = start + i + 2
-    #     chapter['url'] = (
-    #             manga_url
-    #             + "v"
-    #             + str(chapter["chapter_volume"])
-    #             + "/c"
-    #             + chapter['chapter_number']
-    #             + "?page=1")
-    #     info_chapter(chapter)
+    if all_download:
+        update_status(manga[0], (6, "completed"))
 
 
 def list_page(page):
@@ -256,8 +278,8 @@ def set_manga_list():
 
 
 def main():
-    manga_slug = "little-angel-and-good-devil"
-    set_manga(manga_slug, count=400)
+    manga_slug = "chao-hua-xi-shi-"
+    set_manga(manga_slug, count=200, all_download=True)
     # set_manga_list()
 
 

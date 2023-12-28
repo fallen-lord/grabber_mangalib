@@ -158,6 +158,7 @@ async function main(links, asyncFunc = getPageHTML, tryCount = 5) {
   return await mainAsync(links, asyncFunc, tryCount);
 }
 
+document.async_pages = null;
 
 
 """

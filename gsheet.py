@@ -9,7 +9,7 @@ def add_or_get_chapter(worksheet_title):
         chapters = mangalib.worksheet(worksheet_title)
     except:
 
-        chapters = mangalib.add_worksheet(title=worksheet_title, rows=500, cols=7)
+        chapters = mangalib.add_worksheet(title=worksheet_title, rows=1000, cols=7)
         chapters.append_row(
             [
                 "id",
@@ -39,7 +39,7 @@ def open_sheet(**kwargs):
 
 
 
-def set_data(manga_data):
+def set_data(manga_data) -> list:
     global mangalib, manga, manga_ids
     if mangalib == None:
         open_sheet(manga_slug=manga_data['slug'])
@@ -50,7 +50,11 @@ def set_data(manga_data):
         add_or_get_chapter(manga_data['slug'])
 
     if str(manga_data["id"]) in manga_ids:
-        return
+        cell_row = manga_ids.index(str(manga_data["id"])) + 1
+        manga_data = manga.row_values(cell_row)
+        print(manga_data)
+        return manga_data
+
     upper_or_under = lambda key: manga_data.get(key+'Name') if manga_data.get(key+'Name') else manga_data.get(key+'_name')
 
     new_manga_data = [
@@ -63,10 +67,12 @@ def set_data(manga_data):
         # manga_data['status'],
         # "1",
         "not_started",
-
+        "not_started",
     ]
 
     manga.append_row(new_manga_data)
+
+    return new_manga_data
 
 
 def set_chapter(chapter):
@@ -84,6 +90,10 @@ def set_chapter(chapter):
 
     chapters.append_row(new_chapter)
 
+
+def update_status(manga_id: str, values: tuple):
+    cell = manga.find(manga_id)
+    manga.update_cell(cell.row, values[0], values[1])
 
 def set_chapters(chapters_list: list):
     start_row = chapters_list[0][5]

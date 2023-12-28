@@ -1,5 +1,6 @@
 mangalib = None
 
+BASE_WORKSHEET = "MANHUA"
 
 def add_or_get_chapter(worksheet_title):
     # worksheet_title bu manganing slugi
@@ -9,7 +10,7 @@ def add_or_get_chapter(worksheet_title):
         chapters = mangalib.worksheet(worksheet_title)
     except:
 
-        chapters = mangalib.add_worksheet(title=worksheet_title, rows=1000, cols=7)
+        chapters = mangalib.add_worksheet(title=worksheet_title, rows=1200, cols=7)
         chapters.append_row(
             [
                 "id",
@@ -30,29 +31,24 @@ def open_sheet(**kwargs):
 
     gc = gspread.service_account("sources/static_files/credentials.json")
 
-    global mangalib
+    global mangalib, manga, manga_ids
     mangalib = gc.open_by_key(GSHEET_KEY)
+
+    manga = mangalib.worksheet(BASE_WORKSHEET)
+    manga_ids = manga.col_values(1)
 
     manga_slug = kwargs.get("manga_slug")
     if manga_slug:
         add_or_get_chapter(manga_slug)
 
 
-
 def set_data(manga_data) -> list:
-    global mangalib, manga, manga_ids
-    if mangalib == None:
-        open_sheet(manga_slug=manga_data['slug'])
-        manga = mangalib.worksheet("MANHUA")
-        manga_ids = manga.col_values(1)
-        # print("=== worked ===")
-    else:
-        add_or_get_chapter(manga_data['slug'])
+
+    add_or_get_chapter(manga_data['slug'])
 
     if str(manga_data["id"]) in manga_ids:
         cell_row = manga_ids.index(str(manga_data["id"])) + 1
         manga_data = manga.row_values(cell_row)
-        print(manga_data)
         return manga_data
 
     upper_or_under = lambda key: manga_data.get(key+'Name') if manga_data.get(key+'Name') else manga_data.get(key+'_name')
@@ -109,6 +105,7 @@ def get_chapters():
 def add_file_id(chapter, file_id):
     chapters.update_cell(chapter[5], 6, file_id)
 
+open_sheet()
 
 # if __name__ == "__main__":
 #     open_sheet()

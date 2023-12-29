@@ -2,6 +2,7 @@ import time
 import json
 
 from selenium import webdriver
+import undetected_chromedriver as uc
 
 from jscode import *
 from consts import MAIN_DOMAIN
@@ -9,9 +10,14 @@ from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_sta
 
 
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
-driver = webdriver.Chrome(service=cService)
+# driver = webdriver.Chrome(service=cService)
 
+options = uc.ChromeOptions()
+options.headless = False  # Set headless to False to run in non-headless mode
 
+driver = uc.Chrome(use_subprocess=True, options=options)
+
+freeze = None
 # options = webdriver.ChromeOptions()
 # options.add_argument('--headless')
 
@@ -133,7 +139,11 @@ def manga_info(manga_slug):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
     driver.get(manga_url)
-
+    driver.maximize_window()
+    global freeze
+    if not freeze:
+        time.sleep(30)
+        freeze = True
     manga_data = driver.execute_script("return window.__DATA__;")
 
     if manga_data is None:

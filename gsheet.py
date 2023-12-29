@@ -1,14 +1,20 @@
 mangalib = None
+worksheets = None
 
 BASE_WORKSHEET = "MANHUA"
 
 def add_or_get_chapter(worksheet_title):
     # worksheet_title bu manganing slugi
 
-    global chapters, mangalib
-    try:
+    global chapters, mangalib, worksheets
+
+    if not worksheets:
+        worksheets = [ worksheet.title for worksheet in mangalib.worksheets()]
+
+
+    if worksheet_title in worksheets:
         chapters = mangalib.worksheet(worksheet_title)
-    except:
+    else:
 
         chapters = mangalib.add_worksheet(title=worksheet_title, rows=1200, cols=7)
         chapters.append_row(
@@ -22,6 +28,7 @@ def add_or_get_chapter(worksheet_title):
                 "pages",
             ]
         )
+        worksheets.append(worksheet_title)
 
 
 def open_sheet(**kwargs):
@@ -110,8 +117,20 @@ open_sheet()
 def get_manga_list():
     return manga.get_all_values()[1:]
 
-# if __name__ == "__main__":
-#     open_sheet()
+if __name__ == "__main__":
+    open_sheet()
+    # worksheets = mangalib.worksheets()
+    # Print the list of worksheet titles
+    worksheets = [worksheet.title for worksheet in mangalib.worksheets()]
+    for worksheet in worksheets:
+        print(worksheet, type(worksheet))
+        # if len(worksheet.get_all_values()) < 2:
+        #     # Delete the worksheet
+        #     mangalib.del_worksheet(worksheet)
+        #     print(worksheet.title)
+        # else:
+            # print(worksheet.title, "="*10)
+
 #     worksheet = mangalib.worksheet("test")
 #     print(worksheet.get_all_values())
     # worksheet.update(range_name='B1', values='Bingo!')

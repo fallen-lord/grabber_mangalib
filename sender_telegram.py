@@ -1,8 +1,10 @@
 # import time
 from img2pdf import convert
+# import requests
+# import PIL
 
-from base_async import main, get_img
-from gsheet import get_chapters
+from gsheet import *
+from base_async import main
 from teleg import *
 
 
@@ -15,15 +17,13 @@ def if_last_none(img_binaries):
 
 
 def get_images(chapter):
+    global img_url
     img_links = [
-        IMG_URL + chapter[1] + "/" + img
+        img_url + chapter[1] + "/" + img
         for img in chapter[-1]
     ]
     # print(img_links)
-
-    # Beginning Async programming
-
-    images = main(img_links, get_img)
+    images = main(img_links)
 
     if images == []:
         raise Exception(f"Chapter {chapter[3]} da XATOLIK YUZAGA keldi")
@@ -60,21 +60,20 @@ def send(chapter):
     # print(f"Jo'natilindi!!! ( ketgan vaqt {time.time() - start_time} s)")
 
 
-def send_chapters(chapters, start=1, count=10, continue_sending=False):
-    if continue_sending:
+def send_chapters(chapters, start=1, count=10):
 
-        for i, chapter in enumerate(chapters):
+    for i, chapter in enumerate(chapters):
 
-            if chapter[5].isnumeric():
-                start = i + 2
-                # print(chapter, start)
-                break
+        if chapter[5].isnumeric():
+            start = i + 2
+            # print(chapter, start)
+            break
 
     stop = start + count - 2
 
     for i, chapter in enumerate(chapters[start - 2:stop]):
         chapter[5] = start + i
-        chapter[-1] = chapter[-1].split(",")[:-1]
+        chapter[-1] = chapter[-1].split(",")
 
         # start_time = time.time()
 
@@ -83,15 +82,29 @@ def send_chapters(chapters, start=1, count=10, continue_sending=False):
         # print(f"\nUmumiy ketgan vaqt!!! ( ketgan vaqt {time.time() - start_time} s)\n")
 
 
-def lambda_handler():
+def send_manga(manga_slug):
+
     chapters = get_chapters()
 
-    continue_sending = True
     start = 3
     count = 100
+    global img_url
+    img_url = MAIN_IMG_DOMAIN + "/manga/" + manga_slug + "/chapters/"
 
-    send_chapters(chapters, start, count, continue_sending=continue_sending)
+    send_chapters(chapters, start, count)
+
+
+def start_sending(count=None):
+    manga_list = get_manga_list()
+    manga_list = manga_list[15:]
+    manga_list = list(filter(lambda manga: (manga[6] != "completed" and manga[6] != "abandoned"), manga_list))
+    if not count:
+        manga_list = manga_list[:count]
+
+    for i, manga in enumerate(manga_list):
+        send_manga(manga[1])
+
 
 
 if __name__ == "__main__":
-    lambda_handler()
+    send_manga("")

@@ -1,6 +1,6 @@
 from requests import Session
 
-from consts import *
+from consts import MAIN_IMG_DOMAIN, BOT_URL, SOURCE_CHANEL, MAIN_CHANEL
 from gsheet import add_file_id
 
 session = Session()
@@ -28,3 +28,5 @@ def send_file(chapter):
         url,
         data={"chat_id": MAIN_CHANEL, "document": file_id}
     )
+
+

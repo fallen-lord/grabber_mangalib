@@ -30,6 +30,8 @@ def add_or_get_chapter(worksheet_title):
         )
         worksheets.append(worksheet_title)
 
+    return chapters
+
 
 def open_sheet(**kwargs):
     import gspread
@@ -105,7 +107,9 @@ def set_chapters(chapters_list: list):
     chapters.update(range_cells, chapters_list)
 
 
-def get_chapters():
+def get_chapters(manga_slug=None):
+    if manga_slug:
+        add_or_get_chapter(manga_slug)
     return chapters.get_all_values()[1:]
 
 

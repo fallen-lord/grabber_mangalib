@@ -343,16 +343,41 @@ import time
 # from undetected_chromedriver import Chrome, ChromeOptions
 #
 # options = ChromeOptions()
-
+# from selenium import webdriver
 from DrissionPage import ChromiumPage
 # from DrissionPage import Drission
 
-driver = ChromiumPage()
+# cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
+# driver = webdriver.Chrome(service=cService)
+#
+# driver.get("https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong")
+page = ChromiumPage()
 
-driver.get("https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong")
+page.get("https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong?section=info")
+# driver = driver.driverExpected type 'str | int | ChromiumOptions | ChromiumDriver | DriverOptions | None', got 'WebDriver' instead
 
-manga = driver.run_js("window.__DATA__;")
-print(manga)
+manga = page.run_js("""function somef() {
+    return window.__DATA__;
+}""")
+
+# print(manga, type(manga), page.html)
+# d = page.new_tab("https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong?section=chapters")
+import jscode
+links = [
+    "https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong/v2/c387",
+    "https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong/v2/c385",
+    "https://mangalib.me/doupo-cangqiong-dou-po-cang-qiong/v2/c389",
+]
+manga = page.run_async_js(jscode.asyncJS + "main(" + str(links) + """)
+  .then(results => document.async_pages = results.sort((a, b) => a[0] - b[0]))
+  .catch(error => console.error('Error:', error));
+    """)
+
+print(manga, type(manga))
+#
+# manga = page.run_js_loaded("""return window.__DATA__;""")
+#
+# print(manga, type(manga))
 
 # Now you can use 'driver' as you would with the regular Chrome WebDriver
 # driver.get("https://www.zenrows.com/blog/selenium-cloudflare-bypass")
@@ -360,4 +385,5 @@ time.sleep(20)
 # Perform other actions...
 
 # Don't forget to close the browser window when done
-driver.quit()
+# driver.close_tabs()
+# driver.quit()

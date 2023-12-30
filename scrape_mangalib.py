@@ -2,20 +2,23 @@ import time
 import json
 
 from selenium import webdriver
-import undetected_chromedriver as uc
+# import undetected_chromedriver as uc
 
 from jscode import *
 from consts import MAIN_DOMAIN
 from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status, get_manga_list
 
-
+options = webdriver.ChromeOptions()
+options.add_argument("disable-infobars")
+options.add_argument("--start-maximized")
+options.add_argument("--disable-extensions")
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
-# driver = webdriver.Chrome(service=cService)
+driver = webdriver.Chrome(service=cService, options=options)
 
-options = uc.ChromeOptions()
-options.headless = False  # Set headless to False to run in non-headless mode
-
-driver = uc.Chrome(use_subprocess=True, options=options)
+# options = uc.ChromeOptions()
+# options.headless = False  # Set headless to False to run in non-headless mode
+#
+# driver = uc.Chrome(use_subprocess=True, options=options)
 
 freeze = None
 # options = webdriver.ChromeOptions()
@@ -85,7 +88,7 @@ def chapter_by_js(chapter_url):
 
 
 def chapter_by_driver(chapter_url):
-    driver.get(chapter_url)
+    driver.get(chapter_url + "?section=chapters")
     pages = driver.execute_script("return window.__pg;")
     return pages
 
@@ -139,11 +142,11 @@ def manga_info(manga_slug):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
     driver.get(manga_url)
-    driver.maximize_window()
-    global freeze
-    if not freeze:
-        time.sleep(30)
-        freeze = True
+    # driver.maximize_window()
+    # global freeze
+    # if not freeze:
+    #     time.sleep(30)
+    #     freeze = True
     manga_data = driver.execute_script("return window.__DATA__;")
 
     if manga_data is None:
@@ -288,18 +291,18 @@ def set_manga_list():
         list_page(i)
 
 
-def download_list(manga_list=None, count=10):
+def download_list(manga_list=None, count=None):
 
     if not manga_list:
         manga_list = get_manga_list()
-        manga_list = manga_list[20:]
+        # manga_list = manga_list[13:]
         manga_list = list(filter(lambda manga: (manga[5] != "completed" and manga[5] != "abandoned"), manga_list))
 
+    if count:
+        manga_list = manga_list[:count]
     for i, manga in enumerate(manga_list):
         set_manga(manga[1])
         # break
-        if i == count:
-            break
 
 def main():
     download_list()

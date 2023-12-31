@@ -4,7 +4,8 @@ from img2pdf import convert
 # import PIL
 
 from gsheet import *
-from base_async import main
+import project_async
+import base_async
 from teleg import *
 
 
@@ -23,7 +24,7 @@ def get_images(chapter):
         for img in chapter[-1]
     ]
     # print(img_links)
-    images = main(img_links)
+    images = base_async.main(img_links, project_async.get_img)
 
     if images == []:
         raise Exception(f"Chapter {chapter[3]} da XATOLIK YUZAGA keldi")
@@ -102,7 +103,10 @@ def start_sending(count=None):
         manga_list = manga_list[:count]
 
     for i, manga in enumerate(manga_list):
+        update_status(manga[0], (7, "started"))
+
         send_manga(manga[1])
+        update_status(manga[0], (7, "completed"))
 
 
 

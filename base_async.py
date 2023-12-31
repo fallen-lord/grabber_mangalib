@@ -1,6 +1,5 @@
-import asyncio
 
-import aiohttp
+import asyncio
 
 
 def ignor_error(all_results):
@@ -10,16 +9,6 @@ def ignor_error(all_results):
         if type(result) == tuple
     ]
 
-
-async def get_img(link, number_page):
-    async with aiohttp.ClientSession() as session:
-        session.headers['Content-Type'] = 'image/jpeg'
-        session.headers['Accept-Ranges'] = 'bytes'
-
-        async with session.get(link) as response:
-            result = await response.read()
-
-    return number_page, result
 
 
 async def result_links(links, async_func):
@@ -59,5 +48,5 @@ async def main_async(links, async_func, try_count=5):
     return all_results
 
 
-def main(links, async_func=get_img, try_count=5):
+def main(links, async_func, try_count=5):
     return asyncio.run(main_async(links, async_func, try_count))

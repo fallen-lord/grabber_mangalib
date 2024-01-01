@@ -1,10 +1,13 @@
 from requests import Session
 
+from gsheet import *
 from consts import MAIN_IMG_DOMAIN, BOT_URL, SOURCE_CHANEL, MAIN_CHANEL
-from gsheet import add_file_id
+# from gsheet import add_file_id
 
 session = Session()
 
+
+url_document = BOT_URL + "sendDocument"
 
 def send_file(chapter, manga_channel=None):
     # print(chapter)
@@ -31,3 +34,12 @@ def send_file(chapter, manga_channel=None):
         url,
         data={"chat_id": manga_channel, "document": file_id}
     )
+
+
+def send_files_id(files, manga_channel):
+    for file in files:
+        chapter_row = file[1]
+        file_id = file[-1]
+        # add_file_id(chapter_row, file_id)
+        session.post(url_document, data={"chat_id": manga_channel, "document": file_id})
+

@@ -3,11 +3,10 @@ from img2pdf import convert
 # import requests
 # import PIL
 
-from gsheet import *
 import mixins
+from teleg import *
 import project_async
 import base_async
-from teleg import *
 
 
 def if_last_none(img_binaries):
@@ -32,7 +31,9 @@ def send_group(group):
                 if mixins.check_to_latin(img)
     ]
     # print(chapter_links)
+
     chapter_binaries = base_async.main(chapter_links, project_async.chapter_img)
+
     i = chapter_binaries[0][0][1]
     chapter_number = chapter_binaries[0][1]
     chapters = [[i, chapter_number, []]]
@@ -47,7 +48,16 @@ def send_group(group):
         # print(i[:-1])
     # print(chapters[0][1][0])
     for chapter in chapters:
-        print(chapter[0], chapter[1], len(chapter[-1]))
+        # print(chapter[0], chapter[1], len(chapter[-1]))
+        chapter[-1] = convert(if_last_none(chapter[-1]))
+
+    files_id = base_async.main(chapters, project_async.send_main_channel)
+    global manga_channel
+    # for data in files_id:
+    #     data[0] = manga_channel
+    send_files_id(files_id, manga_channel)
+    add_files_id(files_id)
+
 
 
 def get_images(chapter):
@@ -139,7 +149,7 @@ def send_chapters(chapters, start=1, count=None):
         chapter[5] = start + i + 2
         chapter[-1] = chapter[-1].split(",")[:-1]
 
-        # start_time = time.time()
+    start_time = time.time()
 
         # send(chapter)
     chunk_size = 10
@@ -147,11 +157,13 @@ def send_chapters(chapters, start=1, count=None):
     for group in chapter_group:
         # for chapter in group:
         #     print(chapter[:-1], len(chapter[-1]))
+        start_time = time.time()
         send_group(group)
+        print(f"\nUmumiy ketgan vaqt!!! ( ketgan vaqt {time.time() - start_time} s)\n")
+
         # print(len(group))
         print()
-        break
-        # print(f"\nUmumiy ketgan vaqt!!! ( ketgan vaqt {time.time() - start_time} s)\n")
+        # break
 
 
 def send_manga(manga):

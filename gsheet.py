@@ -114,7 +114,16 @@ def get_chapters(manga_slug=None):
 
 
 def add_file_id(chapter, file_id):
-    chapters.update_cell(chapter[5], 6, file_id)
+    if type(chapter) == list:
+        chapter = chapter[5]
+    chapters.update_cell(chapter, 6, file_id)
+
+def add_files_id(files):
+    first_row = files[0][1]
+    last_row = len(files) + first_row
+    files_id = [file[-1] for file in files]
+    range_cells = f"F{first_row}:F{last_row}"
+    chapters.update(range_cells, files_id)
 
 open_sheet()
 

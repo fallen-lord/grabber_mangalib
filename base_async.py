@@ -10,7 +10,6 @@ def ignor_error(all_results):
     ]
 
 
-
 async def result_links(links, async_func):
     tasks = [async_func(link, i) for i, link in enumerate(links)]
     results = await asyncio.gather(*tasks, return_exceptions=True)

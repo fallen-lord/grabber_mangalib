@@ -6,7 +6,7 @@ from gsheet import add_file_id
 session = Session()
 
 
-def send_file(chapter):
+def send_file(chapter, manga_channel=None):
     # print(chapter)
 
     url = BOT_URL + "sendDocument"
@@ -24,9 +24,10 @@ def send_file(chapter):
     file_id = file_id['result']['document']['file_id']
     add_file_id(chapter, file_id)
 
+    if not manga_channel:
+        manga_channel = MAIN_CHANEL
+
     session.post(
         url,
-        data={"chat_id": MAIN_CHANEL, "document": file_id}
+        data={"chat_id": manga_channel, "document": file_id}
     )
-
-

@@ -1,5 +1,8 @@
 
 
+import json
+
+
 def extract_pages_from_html(html_content):
     # Find the start and end index of the script content
     start_index = html_content.find('window.__pg = [')
@@ -39,4 +42,12 @@ def split_list(input_list, chunk_size=50):
     A list of sublists.
     """
     return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
+
+kiril_alp = "йцукенгшщзхъфывапролджэячсмитьбю"
+
+def check_to_latin(img: str) -> bool:
+    for i in img:
+        if i.lower() in kiril_alp:
+            return False
+    return True
 

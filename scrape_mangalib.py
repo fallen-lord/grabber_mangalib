@@ -237,22 +237,24 @@ def set_manga(manga_slug, count=None):
 def list_page(page):
     driver.execute_script(fetch_list_manga + f"top_manga_list({page})")
     items = None
-    for i in range(10):
+    for i in range(30):
         time.sleep(0.2)
         items = driver.execute_script("return document.rrd;")
         if items:
             break
-    print(items)
     manga_list = items.get("items").get("data")
-    for manga in manga_list:
-        # print(manga)
-        set_data(manga)
+
+    print(json.dumps(manga_list[:10]))
+    # for manga in manga_list:
+    #     print(manga['rus_name'])
+    #     set_data(manga)
 
 
 def set_manga_list():
     driver.get("https://mangalib.me/manga-list")
     for i in range(1, 10):
         list_page(i)
+        break
 
 
 def download_list(manga_list=None, count=None):
@@ -269,10 +271,10 @@ def download_list(manga_list=None, count=None):
         # break
 
 def main():
-    download_list()
+    # download_list()
     # manga_slug = "wu-dao-du-zun"
     # set_manga(manga_slug,)
-    # set_manga_list()
+    set_manga_list()
 
 
 if __name__ == "__main__":

@@ -52,3 +52,20 @@ async def send_main_channel(chapter: list, number_range: int) -> tuple:
                 return (number_range, chapter[0], file_id)
             else:
                 print(response.status, response.headers)
+
+
+async def manga_short_info(anime):
+
+    url = "https://mangalib.me/manga-short-info"
+    params = {
+        "id": anime["id"],
+        "slug": anime["slug"],
+        "type": "manga",
+    }
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params) as response:
+            if response.status == 200:
+                result = await response.json()
+                return result
+
+

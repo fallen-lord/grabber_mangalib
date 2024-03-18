@@ -69,12 +69,18 @@ def set_data(manga_data) -> list:
         manga_data['name'],
         upper_or_under("rus"),
         upper_or_under('eng'),
+        manga_data['type'],
+        manga_data['type_id'],
+        manga_data['modelType'],
+        manga_data['href'],
+        manga_data['cover'],
+        manga_data['coverImage'],
+        manga_data['coverImageThumbnail'],
+        str(manga_data['covers']),
         # manga_data['status'],
         # "1",
         "not_started",
         "not_started",
-        manga_data['type'],
-        manga_data['type_id'],
     ]
 
 

@@ -126,3 +126,9 @@ async def process_links(links: List,
 def sync_process_links(*args, **kwargs) -> List:
     """Synchronous wrapper for process_links."""
     return asyncio.run(process_links(*args, **kwargs))
+
+"""
+
+sync_process_links(list_link, manga_short_info, value_type=dict)
+
+"""

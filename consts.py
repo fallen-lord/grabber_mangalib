@@ -1,12 +1,17 @@
+
+
 MAIN_DOMAIN = "https://mangalib.me/"
 
-MANHUA_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
 
-MANHWA_KEY = "1uAKhyTIVpXG3jRpp6PUtKvjRR36l04lb-nwc_Hzutws"
+TOP_MANGA = "1vqgy8_hTMAS91nOPq_yNfKcWa2a5t_6gmnLvkLad3pM"
 
-MANGA_KEY = "10nQd-8ni7U6lbgEDuUJfgdBqeb-pxNxXs8-Z4mDhK6Q"
+# MANHUA_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
+#
+# MANHWA_KEY = "1uAKhyTIVpXG3jRpp6PUtKvjRR36l04lb-nwc_Hzutws"
+#
+# MANGA_KEY = "10nQd-8ni7U6lbgEDuUJfgdBqeb-pxNxXs8-Z4mDhK6Q"
 
-GSHEET_KEY = MANHUA_KEY
+GSHEET_KEY = TOP_MANGA
 
 
 # MANGA_URL = MAIN_DOMAIN + MANGA_SLUG + '/'

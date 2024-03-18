@@ -1,7 +1,7 @@
 mangalib = None
 worksheets = None
 
-BASE_WORKSHEET = "MANHUA"
+BASE_WORKSHEET = "LIST"
 
 def add_or_get_chapter(worksheet_title):
     # worksheet_title bu manganing slugi
@@ -73,7 +73,11 @@ def set_data(manga_data) -> list:
         # "1",
         "not_started",
         "not_started",
+        manga_data['type'],
+        manga_data['type_id'],
     ]
+
+
 
     manga.append_row(new_manga_data)
 

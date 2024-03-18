@@ -90,11 +90,12 @@ def get_value(css_selector):
     return value_text
 
 def update_manga_status(manga: list):
+    # print(manga)
     if manga[5] == "not_started":
         update_status(manga[0], (6, "started"))
-    if len(manga) == 7:
+    if len(manga) < 10:
         status_manga = get_value('div.media-info-list__value.text-capitalize')
-        update_status(manga[0], (8, status_manga))
+        update_status(manga[0], (10, status_manga))
 
 
 def manga_info(manga_slug):
@@ -234,9 +235,13 @@ def set_manga(manga_slug, count=None):
 
 
 def list_page(page):
-    driver.execute_script(fetch_list_manga + f"list_manga({page})")
-    time.sleep(1)
-    items = driver.execute_script("return document.rrd;")
+    driver.execute_script(fetch_list_manga + f"top_manga_list({page})")
+    items = None
+    for i in range(10):
+        time.sleep(0.2)
+        items = driver.execute_script("return document.rrd;")
+        if items:
+            break
     print(items)
     manga_list = items.get("items").get("data")
     for manga in manga_list:
@@ -245,7 +250,7 @@ def list_page(page):
 
 
 def set_manga_list():
-    driver.get("https://mangalib.me/manga-list?types[]=1")
+    driver.get("https://mangalib.me/manga-list")
     for i in range(1, 10):
         list_page(i)
 

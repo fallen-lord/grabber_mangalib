@@ -6,7 +6,7 @@ from img2pdf import convert
 import mixins
 from teleg import *
 import project_async
-import base_async
+import async_worker
 
 
 def if_last_none(img_binaries):
@@ -32,7 +32,7 @@ def send_group(group):
     ]
     # print(chapter_links)
 
-    chapter_binaries = base_async.main(chapter_links, project_async.chapter_img)
+    chapter_binaries = async_worker.sync_process_links(chapter_links, project_async.chapter_img)
 
     i = chapter_binaries[0][0][1]
     chapter_number = chapter_binaries[0][1]
@@ -51,7 +51,7 @@ def send_group(group):
         # print(chapter[0], chapter[1], len(chapter[-1]))
         chapter[-1] = convert(if_last_none(chapter[-1]))
 
-    files_id = base_async.main(chapters, project_async.send_main_channel)
+    files_id = async_worker.sync_process_links(chapters, project_async.send_main_channel)
     global manga_channel
     # for data in files_id:
     #     data[0] = manga_channel
@@ -68,7 +68,7 @@ def get_images(chapter):
         if mixins.check_to_latin(img)
     ]
     # print(img_links)
-    images = base_async.main(img_links, project_async.get_img)
+    images = async_worker.sync_process_links(img_links, project_async.get_img)
 
     if images == []:
         raise Exception(f"Chapter {chapter[3]} da XATOLIK YUZAGA keldi")

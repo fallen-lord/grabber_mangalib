@@ -101,7 +101,7 @@ import time
 
 from img2pdf import convert
 
-from base_async import *
+from async_worker import *
 from gsheet import *
 from teleg import *
 

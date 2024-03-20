@@ -212,3 +212,147 @@ document.async_pages = null;
 
 """
 
+
+async_worker_in_js_format = """
+
+async function filtering_to_unique(results) {
+    let uniqueTuplesDict = {};
+
+    for (let [idx, val] of results) {
+        if (!(idx in uniqueTuplesDict) || val !== null) {
+            uniqueTuplesDict[idx] = [idx, val];
+        }
+    }
+
+    let uniqueTuples = Object.values(uniqueTuplesDict);
+    let uniqueList = uniqueTuples.map(t => t[1]);
+    return uniqueList;
+}
+
+function filtering_type(results, valueType, toType = true) {
+    let keyFunc;
+    if (toType) {
+        keyFunc = result => typeof result === valueType;
+    } else {
+        keyFunc = result => typeof result[1] !== valueType;
+    }
+    return results.filter(keyFunc);
+}
+
+async function result_links(links, asyncFunc) {
+    let tasks = links.map(link => asyncFunc(link[1]));
+    let results = await Promise.allSettled(tasks);
+    return results.map(result => result.value);
+}
+
+async function async_loop(links, asyncFunc, tryCount, printErrorLinks, ignoreError, valueType) {
+    let allResults = [];
+    let tc = 0;
+
+    for (let i = 0; i < tryCount; i++) {
+        let results = await result_links(links, asyncFunc);
+        allResults.push(...results.map((result, j) => [links[j][0], result]));
+
+        let errorLinks = links.filter((link, j) => !(results[j] instanceof Object));
+
+        if (errorLinks.length === 0) {
+            break;
+        }
+
+        links = errorLinks;
+
+        if (printErrorLinks) {
+            console.log(links);
+        }
+        console.log(i, links);
+        tc = i;
+    }
+
+    if (tryCount - 1 === tc && !ignoreError) {
+        allResults = filtering_type(allResults, valueType, false);
+        console.log(links, tryCount, tc, tryCount - 1 === tc, !ignoreError, tryCount - 1 === tc && !ignoreError);
+        throw new Error("An error occurred during asynchronous execution");
+    }
+
+    return allResults;
+}
+
+async function process_links(links, asyncFunc, tryCount = 10, returnResults = true, ignoreError = false, valueType = null, onlySuccessfulResults = false, printErrorLinks = false) {
+    if (!Array.isArray(links)) {
+        [links, asyncFunc] = [asyncFunc, links];
+    }
+
+    tryCount = 10;
+    //console.log(tryCount, "ddddddddddddddddddddddd");
+    links = links.map((link, i) => [i, link]);
+    let allResults = await async_loop(links, asyncFunc, tryCount, printErrorLinks, ignoreError, valueType);
+
+    if (!returnResults) {
+        return;
+    }
+
+    allResults.sort((a, b) => a[0] - b[0]);
+    allResults = await filtering_to_unique(allResults);
+
+    if (onlySuccessfulResults) {
+        allResults = filtering_type(allResults, valueType);
+    }
+
+    document.all_results = allResults;
+    return allResults;
+}
+
+async function sync_process_links(...args) {
+    document.all_results = undefined;
+    return await process_links(...args);
+}
+
+"""
+
+manga_short_info = """
+
+async function manga_short_info(anime) {
+    const url = "https://mangalib.me/manga-short-info";
+    const params = new URLSearchParams({
+        id: anime.id,
+        slug: anime.slug,
+        type: "manga"
+    });
+
+    try {
+        const response = await fetch(`${url}?${params}`);
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            throw new Error(`Failed to fetch manga short info: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Error in manga_short_info:", error);
+        throw error;
+    }
+}
+
+"""
+
+
+get_page = """
+
+async function get_page(url) {
+    try {
+        const response = await fetch(url);
+        const result = {}
+        if (response.ok) {
+             result.text = await response.text();
+            //const result = await response.json();
+            return result;
+        } else {
+            throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error("Error in get_page:", error);
+        throw error;
+    }
+}
+
+"""

@@ -1,3 +1,7 @@
+
+import mixins
+
+
 mangalib = None
 worksheets = None
 
@@ -40,11 +44,12 @@ def open_sheet(**kwargs):
 
     gc = gspread.service_account("sources/static_files/credentials.json")
 
-    global mangalib, manga, manga_ids
+    global mangalib, manga, manga_ids, col_names
     mangalib = gc.open_by_key(GSHEET_KEY)
 
     manga = mangalib.worksheet(BASE_WORKSHEET)
     manga_ids = manga.col_values(1)
+    col_names = manga.row_values(1)
 
     manga_slug = kwargs.get("manga_slug")
     if manga_slug:
@@ -68,15 +73,9 @@ def set_data(manga_data) -> list:
         manga_data['slug'],
         manga_data['name'],
         upper_or_under("rus"),
-        upper_or_under('eng'),
-        manga_data['type'],
-        manga_data['type_id'],
-        manga_data['modelType'],
-        manga_data['href'],
-        manga_data['cover'],
-        manga_data['coverImage'],
-        manga_data['coverImageThumbnail'],
-        str(manga_data['covers']),
+        # upper_or_under('eng'),
+        # manga_data['type'],
+        # manga_data['type_id'],
         # manga_data['status'],
         # "1",
         "not_started",
@@ -85,7 +84,7 @@ def set_data(manga_data) -> list:
 
 
 
-    manga.append_row(new_manga_data)
+    # manga.append_row(new_manga_data)
 
     return new_manga_data
 
@@ -108,7 +107,10 @@ def set_chapter(chapter):
 
 def update_status(manga_id: str, values: tuple):
     cell = manga.find(manga_id)
-    manga.update_cell(cell.row, values[0], values[1])
+    col_number = values[0]
+    if isinstance(col_number, str):
+        col_number = get_column_number(col_number)
+    manga.update_cell(cell.row, col_number, values[1])
 
 def set_chapters(chapters_list: list):
     start_row = chapters_list[0][5]
@@ -140,13 +142,60 @@ open_sheet()
 def get_manga_list():
     return manga.get_all_values()[1:]
 
+def set_list(manga_list):
+
+    global manga_ids, manga, col_names
+    chunk_size = 10
+    col_names = col_names[:26]
+    print(col_names)
+
+    manga_list = [
+        [
+            str(data[col_name])
+            for col_name in col_names
+        ]
+        for data in manga_list
+            if not str(data['id']) in manga_ids
+    ]
+    sub_manga_lists = mixins.split_list(manga_list, chunk_size)
+
+    for manga_lists in sub_manga_lists:
+
+        start_row = len(manga_ids) + 1
+        end_row = start_row + chunk_size
+        cell_range = f"A{start_row}:Z{end_row}"
+        print(cell_range)
+        manga.update(cell_range, manga_lists)
+        manga_ids += [data[0] for data in manga_lists]
+
+def slugs_and_downloadeds():
+    global manga
+    slug_number = get_column_number("slug")
+    downloading_number = get_column_number("downloading")
+    slugs = manga.col_values(slug_number)[1:]
+    downloadings = manga.col_values(downloading_number)[1:]
+    if len(downloadings) < len(slugs):
+        downloadings += [""] * (len(slugs) - len(downloadings))
+    # print(downloadings, slugs)
+    # print(len(downloadings), len(slugs))
+    return ((slug, downloadings[i], i) for i, slug in enumerate(slugs))
+
+def get_column_number(col_name):
+    for i, value in enumerate(col_names):
+        if value == col_name:
+            break
+    return i + 1
+
 if __name__ == "__main__":
-    open_sheet()
+    # open_sheet()
+    # set_list(None)
+    s = slugs_and_downloadeds()
+    print(next(s))
     # worksheets = mangalib.worksheets()
     # Print the list of worksheet titles
     worksheets = [worksheet.title for worksheet in mangalib.worksheets()]
-    for worksheet in worksheets:
-        print(worksheet, type(worksheet))
+    # for worksheet in worksheets:
+    #     print(worksheet, type(worksheet))
         # if len(worksheet.get_all_values()) < 2:
         #     # Delete the worksheet
         #     mangalib.del_worksheet(worksheet)

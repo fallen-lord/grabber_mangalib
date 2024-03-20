@@ -1,3 +1,5 @@
+
+import json
 import time
 
 from selenium import webdriver
@@ -6,7 +8,7 @@ from selenium import webdriver
 from jscode import *
 from mixins import *
 from consts import MAIN_DOMAIN
-from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status, get_manga_list
+from gsheet import set_data, set_chapter, get_chapters, set_chapters, update_status, get_manga_list, set_list, slugs_and_downloadeds, add_or_get_chapter
 
 options = webdriver.ChromeOptions()
 options.add_argument("disable-infobars")
@@ -15,6 +17,7 @@ options.add_argument("--disable-extensions")
 cService = webdriver.ChromeService(executable_path='sources/chromedriver-win64/chromedriver.exe')
 driver = webdriver.Chrome(service=cService, options=options)
 
+driver.get(MAIN_DOMAIN)
 # options = uc.ChromeOptions()
 # options.headless = False  # Set headless to False to run in non-headless mode
 #
@@ -28,6 +31,32 @@ freeze = None
 
 mangaurl = lambda manga_slug: MAIN_DOMAIN + manga_slug + "/"
 
+
+def run_js_script(js_script, return_value=True, value_name="document.all_results;", print_script=False):
+
+    if print_script:
+        print(js_script)
+
+    driver.execute_script(js_script)
+
+    if not return_value:
+        return
+
+    items = None
+    for i in range(80):
+        time.sleep(0.1)
+        items = driver.execute_script("return " + value_name)
+        if items:
+            break
+    return items
+
+def async_worker_in_js(links: list, function_name:str, function_code: str):
+
+    lt = json.dumps(links)
+    js_script = function_code + async_worker_in_js_format
+    js_script += f"\nlist_link={lt};\n\n"
+    js_script += f"sync_process_links(list_link, {function_name});"
+    return run_js_script(js_script)
 
 def chapter_by_js(chapter_url):
     driver.execute_script(
@@ -101,47 +130,44 @@ def update_manga_status(manga: list):
 def manga_info(manga_slug):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
-    driver.get(manga_url)
-    # driver.maximize_window()
-    # global freeze
-    # if not freeze:
-    #     time.sleep(30)
-    #     freeze = True
-    manga_data = driver.execute_script("return window.__DATA__;")
-
-    if manga_data is None:
-        update_status(manga_slug, (6, "abandoned"))
+    first_page = async_worker_in_js([manga_url],"get_page", get_page)
+    if first_page is None:
+        update_status(manga_slug, ("downloading", "abandoned"))
         return [], []
-    chapters_list = manga_data.get("chapters").get('list')
-    if chapters_list == []:
-        update_status(manga_slug, (6, "abandoned"))
+    try:
+        first_page = first_page[0]['text']
+        manga_data = first_page.split("window.__DATA__ = ")
+    except:
+        print(manga_url)
         return [], []
 
+    manga_data = manga_data[1].split(";\n")[0].strip()
+    manga_data = json.loads(manga_data)
+    # print(manga_data)
+
+    # driver.get(manga_url)
+    # manga_data = driver.execute_script("return window.__DATA__;")
+
+    # if manga_data is None:
+    #     update_status(manga_slug, (6, "abandoned"))
+    #     return [], []
+    chapters_list = greater_team_chapters(manga_data)
+
+    if chapters_list is None:
+        update_status(manga_slug, ("downloading", "abandoned"))
+        return [], []
+    #
     manga = set_data(manga_data['manga'])
-    update_manga_status(manga)
-
+    # update_manga_status(manga)
 
     return chapters_list, manga
 
 
 def async_js(links: list):
 
-    jscode = asyncJS + "main(" + json.dumps(links) + """)
-  .then(results => document.async_pages = results.sort((a, b) => a[0] - b[0]))
-  .catch(error => console.error('Error:', error));
-    """
-    # print(jscode)
-    driver.execute_script(jscode, links)
-    chapter_pages_html = None
-    for i in range(100):
+    pages = async_worker_in_js(links, "get_page", get_page)
 
-        chapter_pages_html = driver.execute_script("return document.async_pages;")
-        if chapter_pages_html is not None:
-            break
-        time.sleep(0.4)
-        # print(chapter_pages_html)
-
-    return [item[1] for item in chapter_pages_html]
+    return [page['text'] for page in pages]
 
 
 def async_chapter_group(chapters, start):
@@ -200,7 +226,7 @@ def chapter_group(chapters, start):
 
 
 def split_chapters(chapters, start, stop):
-    chunk_size = 50
+    chunk_size = 60
     chapters_list = split_list(chapters[start:stop], chunk_size)
 
     for chapters in chapters_list:
@@ -212,7 +238,7 @@ def split_chapters(chapters, start, stop):
         print(f"\n\n {chunk_size} ta uchun ketgan vaqt: {finish_time} s")
 
 
-def set_manga(manga_slug, count=None):
+def set_manga(manga_slug, count=None, index_manga=None):
 
     global manga_url
     manga_url = mangaurl(manga_slug)
@@ -229,35 +255,55 @@ def set_manga(manga_slug, count=None):
         stop = start + count
 
     chapters.reverse()
+    # print(chapters)
+    print(manga_slug)
+    # add_or_get_chapter(manga_slug)
     split_chapters(chapters, start, stop)
     if not count:
-        update_status(manga[0], (6, "completed"))
+        update_status(manga[0], ("downloading", "completed"))
 
 
 def list_page(page):
-    driver.execute_script(fetch_list_manga + f"top_manga_list({page})")
-    items = None
-    for i in range(30):
-        time.sleep(0.2)
-        items = driver.execute_script("return document.rrd;")
-        if items:
-            break
-    manga_list = items.get("items").get("data")
+    chank_size = 100
+    print("started")
+    js_script = fetch_list_manga + f"top_manga_list({page})"
+    items = run_js_script(js_script, value_name="document.rrd;")
 
-    print(json.dumps(manga_list[:10]))
-    # for manga in manga_list:
-    #     print(manga['rus_name'])
+    manga_list = items.get("items").get("data")[:chank_size]
+    print("got items")
+
+    manga_short_infos = async_worker_in_js(manga_list,
+                                           "manga_short_info",
+                                           manga_short_info)
+    print("got short infos")
+
+    for i, manga in enumerate(manga_list):
+        manga.update(manga_short_infos[i])
+
+    set_list(manga_list)
+
+    # for manga in manga_short_infos:
+    #     print(manga)
     #     set_data(manga)
-
 
 def set_manga_list():
     driver.get("https://mangalib.me/manga-list")
-    for i in range(1, 10):
+    for i in range(1, 20):
         list_page(i)
-        break
+        # break
 
 
-def download_list(manga_list=None, count=None):
+def download_list(count=None):
+
+    manga_list = slugs_and_downloadeds()
+
+    for slug, downloading_status, i in manga_list:
+        if downloading_status in ["completed", "abandoned"]:
+            continue
+        i += 2
+        set_manga(slug, index_manga=i)
+        # break
+
 
     if not manga_list:
         manga_list = get_manga_list()
@@ -266,15 +312,15 @@ def download_list(manga_list=None, count=None):
 
     if count:
         manga_list = manga_list[:count]
-    for i, manga in enumerate(manga_list):
-        set_manga(manga[1])
+    # for i, manga in enumerate(manga_list):
+    #     set_manga(manga[1])
         # break
 
 def main():
-    # download_list()
+    download_list()
     # manga_slug = "wu-dao-du-zun"
-    # set_manga(manga_slug,)
-    set_manga_list()
+    # set_manga(manga_slug="douluo-dalu-ii-jueshi-tangmen")
+    # set_manga_list()
 
 
 if __name__ == "__main__":
@@ -285,7 +331,7 @@ if __name__ == "__main__":
         main()
 
         finish_time = time.time() - start_time
-        print(f"\n\n\n yuklab olsih uchun ketgan vaqt: {finish_time} s")
+        print(f"\n yuklab olsih uchun ketgan vaqt: {finish_time} s")
 
     except Exception as e:
         # time.sleep(10)
@@ -293,7 +339,7 @@ if __name__ == "__main__":
         driver.close()
         driver.quit()
 
-        print("\n\nRaised Exception\n\n")
+        print("\nRaised Exception\n")
         print(e)
 
         raise e

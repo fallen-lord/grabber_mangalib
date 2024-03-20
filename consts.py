@@ -3,8 +3,8 @@
 MAIN_DOMAIN = "https://mangalib.me/"
 
 
-# TOP_MANGA = "1xLbYNE0vmCh108o6fgSiLl91m3cC0Z4nYJo22iWCa2Q"
-TOP_MANGA = "1vqgy8_hTMAS91nOPq_yNfKcWa2a5t_6gmnLvkLad3pM"
+TOP_MANGA = "1xLbYNE0vmCh108o6fgSiLl91m3cC0Z4nYJo22iWCa2Q"
+# TOP_MANGA = "1vqgy8_hTMAS91nOPq_yNfKcWa2a5t_6gmnLvkLad3pM"
 
 # MANHUA_KEY = '10wCimMLo_C_KbgsT1Um4Eo8CTQ25LxHUuIjc8Z2ED78'
 #

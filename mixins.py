@@ -51,3 +51,33 @@ def check_to_latin(img: str) -> bool:
             return False
     return True
 
+def greater_team_chapters(manga_data):
+    chapters_list = manga_data.get("chapters").get('list')
+    teams = manga_data.get("chapters").get("teams")
+    if (teams is None) or (len(teams) == 1):
+        return chapters_list
+
+    team_chapters = {}
+    for team in teams:
+        team_chapters[team['branch_id']] =[]
+
+    for chapter in chapters_list:
+        team_chapters[chapter['branch_id']].append(chapter)
+
+    gre = 0
+    for chp_list in team_chapters.values():
+        if gre < len(chp_list):
+            gre = len(chp_list)
+            chapters_list = chp_list
+    return chapters_list
+
+
+
+
+
+
+
+
+
+
+

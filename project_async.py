@@ -68,4 +68,11 @@ async def manga_short_info(anime):
                 result = await response.json()
                 return result
 
+async def get_firts_page(url):
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                result = await response.text()
+                return result
 

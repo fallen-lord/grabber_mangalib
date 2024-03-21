@@ -26,6 +26,37 @@ BOT_TOKEN = "6608887593:AAErq3_g1SIriqbDAG873U-P6NhQyuxXgzc"
 
 BOT_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 
-MAIN_CHANEL = "-1002124046148"
+# MAIN_CHANEL = "-1002124046148"
 
 SOURCE_CHANEL = "-1002067172763"
+
+
+
+
+
+API_ID = 18341122
+API_HASH = '2f9bb4eaf216bbecf35e956e32f80161'
+
+SOURCE = "sources/"
+SESSION_PATH =SOURCE + "sessions/"
+SESSION_NAME = SESSION_PATH + "not_just"
+# SESSION_NAME = SESSION_PATH + "my33_328_humans"
+# CHANNEL_PATH = SOURCE + "channels/"
+# IMAGES = SOURCE + "images/"
+
+# MAIN_BOT = "https://t.me/mkclone_bot"
+MAIN_BOT = "https://t.me/sender2chanel_bot"
+
+# BOT_TOKEN = "6607981941:AAHYsm5T1t4lfkS9yfkoggIOq-DCdupJsjk"
+# BOT_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
+
+
+UPDATE_URL = BOT_URL + "getUpdates"
+
+if __name__ == "__main__":
+    print(UPDATE_URL)
+
+SEARCH_ENGINE_ID = "857d9405f9a1048a8"
+
+API_KEY = "AIzaSyBnrCm6papbhszMuFuf7FFt63DcZn8oZpI"
+

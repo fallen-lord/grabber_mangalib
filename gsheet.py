@@ -180,6 +180,24 @@ def slugs_and_downloadeds():
     # print(len(downloadings), len(slugs))
     return ((slug, downloadings[i], i) for i, slug in enumerate(slugs))
 
+def column_by_names(*args):
+
+    global manga
+    columns = {
+        column_name: manga.col_values(get_column_number(column_name))[1:]
+        for column_name in args
+    }
+    greater_row = 0
+    for col in columns.values():
+        if greater_row < len(col):
+            greater_row = len(col)
+
+    for col in columns.values():
+        col += [""] * (greater_row - len(col))
+    for i in range(greater_row):
+        yield [columns[col][i] for col in args]
+
+
 def get_column_number(col_name):
     for i, value in enumerate(col_names):
         if value == col_name:
@@ -189,24 +207,14 @@ def get_column_number(col_name):
 if __name__ == "__main__":
     # open_sheet()
     # set_list(None)
-    s = slugs_and_downloadeds()
-    print(next(s))
+    # s = column_by_names("slug", "downloading")
+    # print(next(s))
+    manga_list = column_by_names("slug", "downloading", "sending", "channel_id")
+
+    for manga_data in manga_list:
+        if (not manga_data[1] == "completed") or (manga_data[2] == "completed"):
+            continue
+        print(manga_data)
     # worksheets = mangalib.worksheets()
     # Print the list of worksheet titles
-    worksheets = [worksheet.title for worksheet in mangalib.worksheets()]
-    # for worksheet in worksheets:
-    #     print(worksheet, type(worksheet))
-        # if len(worksheet.get_all_values()) < 2:
-        #     # Delete the worksheet
-        #     mangalib.del_worksheet(worksheet)
-        #     print(worksheet.title)
-        # else:
-            # print(worksheet.title, "="*10)
-
-#     worksheet = mangalib.worksheet("test")
-#     print(worksheet.get_all_values())
-    # worksheet.update(range_name='B1', values='Bingo!')
-    # worksheet.update_cell(1, 1, 'Bingo!')
-    # print([1, 2]*10)
-    # worksheet.update(range_name=([1, 3, 26, 3], [9, 6]*13, ))
-    # worksheet.update('A1:B2', [[1, 2], [3, 4]])
+    # worksheets = [worksheet.title for worksheet in mangalib.worksheets()]

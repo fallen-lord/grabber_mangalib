@@ -32,7 +32,7 @@ freeze = None
 mangaurl = lambda manga_slug: MAIN_DOMAIN + manga_slug + "/"
 
 
-def run_js_script(js_script, return_value=True, value_name="document.all_results;", print_script=False):
+def run_js_script(js_script, return_value=True, value_name="document.all_results;", print_script=False, timeout=5):
 
     if print_script:
         print(js_script)
@@ -42,21 +42,22 @@ def run_js_script(js_script, return_value=True, value_name="document.all_results
     if not return_value:
         return
 
-    items = None
-    for i in range(80):
+    # items = None
+    for i in range(timeout * 10):
         time.sleep(0.1)
         items = driver.execute_script("return " + value_name)
+        # print(items)
         if items:
             break
     return items
 
-def async_worker_in_js(links: list, function_name:str, function_code: str):
+def async_worker_in_js(links: list, function_name:str, function_code: str, timeout=5):
 
     lt = json.dumps(links)
     js_script = function_code + async_worker_in_js_format
     js_script += f"\nlist_link={lt};\n\n"
     js_script += f"sync_process_links(list_link, {function_name});"
-    return run_js_script(js_script)
+    return run_js_script(js_script, timeout=timeout)
 
 def chapter_by_js(chapter_url):
     driver.execute_script(
@@ -130,7 +131,9 @@ def update_manga_status(manga: list):
 def manga_info(manga_slug):
     """Manga haqidagi ma'lumotni googlesheet ga joylaydigan funksiya"""
 
-    first_page = async_worker_in_js([manga_url],"get_page", get_page)
+    print(manga_url)
+    first_page = async_worker_in_js([manga_url], "get_page", get_page)
+    print(manga_url)
     if first_page is None:
         update_status(manga_slug, ("downloading", "abandoned"))
         return [], []
@@ -255,7 +258,7 @@ def set_manga(manga_slug, count=None, index_manga=None):
         stop = start + count
 
     chapters.reverse()
-    # print(chapters)
+    print(chapters)
     print(manga_slug)
     # add_or_get_chapter(manga_slug)
     split_chapters(chapters, start, stop)
@@ -328,8 +331,8 @@ if __name__ == "__main__":
 
         start_time = time.time()
 
+        time.sleep(10)
         main()
-
         finish_time = time.time() - start_time
         print(f"\n yuklab olsih uchun ketgan vaqt: {finish_time} s")
 

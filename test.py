@@ -390,7 +390,17 @@ b = {"a": "z", "b": "c"}
 
 a.update(b)
 
-print(a)
+a = [0]
+a += [""] * 0
+
+def ff():
+    yield 1
+    yield 2
+
+
+a = ff()
+print(next(a))
+print(next(a))
 
 # Don't forget to close the browser window when done
 # driver.close_tabs()

@@ -4,17 +4,16 @@ import aiohttp
 from fake_useragent import UserAgent
 ua = UserAgent()
 
-async def get_img(link: str, number_range: int) -> tuple:
+async def get_img(link: str) -> tuple:
     async with aiohttp.ClientSession() as session:
         session.headers['Content-Type'] = 'image/jpeg'
         session.headers['Accept-Ranges'] = 'bytes'
         session.headers['User-Agent'] = ua.random
 
-
         async with session.get(link) as response:
             result = await response.read()
 
-    return (number_range, result)
+    return result
 
 
 async def chapter_img(chapter: list, number_range: int) -> tuple:

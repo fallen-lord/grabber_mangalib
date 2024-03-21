@@ -64,9 +64,10 @@ async def async_loop(links, async_func, try_count, print_error_links, ignor_erro
         error_links = [
             links[j]
             for j, result in enumerate(results)
-            if not isinstance(result, tuple)
+            if not isinstance(result, value_type)
         ]
 
+        # print(value_type, type(results[0]), isinstance(results[0], value_type))
         if not error_links:
             break
 
@@ -117,7 +118,7 @@ async def process_links(links: List,
         return
     all_results = sorted(all_results, key=lambda result: result[0])
     all_results = filtering_to_unique(all_results)
-    # print(all_results)
+    # print(all_results[1])
     if only_successful_results:
         all_results = filtering_type(all_results, value_type)
     return all_results

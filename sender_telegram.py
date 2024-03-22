@@ -124,6 +124,8 @@ def send(chapter, i=0, manga=None):
         else:
             print(img_binaries)
             raise Exception("XATOLIK YUZAGA keldi")
+    gc.collect()
+
 
 def send_chapters(chapters, start=1, count=None, manga=None):
     for i, chapter in enumerate(chapters):

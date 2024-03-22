@@ -124,26 +124,6 @@ def send(chapter, i=0, manga=None):
         else:
             print(img_binaries)
             raise Exception("XATOLIK YUZAGA keldi")
-        # pdf_file = convert(img_binaries[:-1])
-        # for i in range(5):
-        #   try:
-        #     pdf_file = convert(img_binaries)
-        #   except Exception as e:
-        #     print(e, i)
-        #     if i == 4:
-        #       for j in range(len(img_binaries)):
-        #         try:
-        #           convert(img_binaries[j])
-        #         except Exception as e:
-        #           print(e, j)
-        #           break
-        #       pdf_file = convert
-        #     continue
-        #   break
-        # print(f"\timg - > pdf ( ketgan vaqt {time.time() - start_time} s)")
-
-        # print(f"Jo'natilindi!!! ( ketgan vaqt {time.time() - start_time} s)")
-
 
 def send_chapters(chapters, start=1, count=None, manga=None):
     for i, chapter in enumerate(chapters):
